@@ -1,0 +1,74 @@
+/* Sidebar container */
+.sidebar-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Sidebar default state */
+#sidebar {
+    /* width: 250px; */
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+/* Collapsed Sidebar */
+#sidebar.collapsed {
+    width: 60px;
+}
+
+/* Hide text when collapsed */
+#sidebar.collapsed .menu-text {
+    display: none;
+}
+
+/* Center icons when collapsed */
+#sidebar.collapsed .menu-icon {
+    margin: auto;
+    display: block;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #1A5D99;
+    color: white;
+    border: none;
+    /* padding: 8px 12px; */
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 1000;
+    font-size: 18px;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    #sidebar {
+        width: 0;
+        overflow: hidden;
+        position: fixed;
+        height: 100vh;
+        z-index: 100;
+        /* background: white; */
+        box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #sidebar.open {
+        width:100%;
+        
+    }
+
+    .toggle-btn {
+        left: 10px;
+        top: 10px;
+    }
+
+    .app-sidebar .app-sidebar-content .menu .menu-item .menu-link .menu-text {
+        flex:0;
+        padding: 6px;
+        
+    }
+
+
+}

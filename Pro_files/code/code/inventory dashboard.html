@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select, .form-group button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-group button {
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Add Inventory Item</h2>
+  <form>
+    <div class="two-column">
+
+      <div class="form-group">
+        <label for="material">Material</label>
+        <select id="material" onchange="generateMaterialId()">
+          <option value="">Select Material</option>
+        </select>
+        <button type="button" onclick="addMaterial()">+ Add Material</button>
+      </div>
+
+      <div class="form-group">
+        <label for="materialId">Material ID</label>
+        <input type="text" id="materialId" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="supplier">Supplier</label>
+        <select id="supplier">
+          <option value="">Select Supplier</option>
+        </select>
+        <button type="button" onclick="addSupplier()">+ Add Supplier</button>
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <select id="department">
+          <option value="">Select Department</option>
+        </select>
+        <button type="button" onclick="addDepartment()">+ Add Department</button>
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" oninput="calculateTotal()">
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" id="price" oninput="calculateTotal()">
+      </div>
+
+      <div class="form-group">
+        <label for="gst">GST (%)</label>
+        <input type="number" id="gst" value="8" oninput="calculateTotal()">
+      </div>
+
+      <div class="form-group">
+        <label for="total">Total Amount</label>
+        <input type="text" id="total" readonly>
+      </div>
+
+    </div>
+    <div class="form-group">
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Preload default materials
+  const materialSelect = document.getElementById('material');
+  const defaultMaterials = ["Cement", "Steel", "Bricks"];
+
+  defaultMaterials.forEach(material => {
+    const option = document.createElement('option');
+    option.value = material;
+    option.text = material;
+    materialSelect.add(option);
+  });
+
+  function generateMaterialId() {
+    const material = document.getElementById('material').value;
+    if (material) {
+      const materialId = material.toUpperCase().slice(0, 3) + '-ID-' + (Math.floor(Math.random() * 1000));
+      document.getElementById('materialId').value = materialId;
+    } else {
+      document.getElementById('materialId').value = '';
+    }
+  }
+
+  function calculateTotal() {
+    const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+    const price = parseFloat(document.getElementById('price').value) || 0;
+    const gst = parseFloat(document.getElementById('gst').value) || 0;
+
+    const total = (quantity * price) * (1 + gst / 100);
+    document.getElementById('total').value = '₹ ' + total.toFixed(2);
+  }
+
+  function addMaterial() {
+    const newMaterial = prompt("Enter new material name:");
+    if (newMaterial) {
+      const option = document.createElement('option');
+      option.value = newMaterial;
+      option.text = newMaterial;
+      materialSelect.add(option);
+      materialSelect.value = newMaterial;
+      generateMaterialId();
+    }
+  }
+
+  function addSupplier() {
+    const newSupplier = prompt("Enter new supplier name:");
+    if (newSupplier) {
+      const supplierSelect = document.getElementById('supplier');
+      const option = document.createElement('option');
+      option.value = newSupplier;
+      option.text = newSupplier;
+      supplierSelect.add(option);
+      supplierSelect.value = newSupplier;
+    }
+  }
+
+  function addDepartment() {
+    const newDepartment = prompt("Enter new department name:");
+    if (newDepartment) {
+      const departmentSelect = document.getElementById('department');
+      const option = document.createElement('option');
+      option.value = newDepartment;
+      option.text = newDepartment;
+      departmentSelect.add(option);
+      departmentSelect.value = newDepartment;
+    }
+  }
+</script>
+
+</body>
+</html>

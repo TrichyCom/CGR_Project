@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; }
+        
+        /* Sidebar */
+        .sidebar { width: 250px; height: 100vh; background: #007bff; color: white; padding: 20px; position: fixed; }
+        .sidebar h2 { text-align: center; margin-bottom: 20px; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li { padding: 15px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+        .sidebar ul li:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 20px; width: 100%; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none; }
+        h2, h3 { text-align: center; margin-bottom: 15px; }
+        
+        button { background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Worker Dashboard</h2>
+        <ul>
+            <li onclick="showSection('attendance')">📌 Mark Attendance</li>
+            <li onclick="showSection('leave')">📝 Apply Leave</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Attendance -->
+        <div class="container" id="attendance">
+            <h3>Mark Attendance</h3>
+            <p id="attendance-status">Click the button to mark attendance.</p>
+            <button onclick="markAttendance()">Mark Attendance</button>
+        </div>
+
+        <!-- Leave Application -->
+        <div class="container" id="leave">
+            <h3>Apply for Leave</h3>
+            <label>Leave Type:</label>
+            <select id="leaveType">
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Paid Leave">Paid Leave</option>
+            </select>
+            <label>Leave Date:</label>
+            <input type="date" id="leaveDate">
+            <button onclick="applyLeave()">Apply Leave</button>
+            <p id="leave-status"></p>
+
+            <h3>Leave Balance</h3>
+            <table>
+                <tr><th>Leave Type</th><th>Remaining Days</th></tr>
+                <tr><td>Sick Leave</td><td>5</td></tr>
+                <tr><td>Casual Leave</td><td>3</td></tr>
+                <tr><td>Paid Leave</td><td>10</td></tr>
+            </table>
+
+            <h3>Leave History</h3>
+            <table id="leaveHistory">
+                <tr><th>Date</th><th>Type</th><th>Status</th></tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            let sections = document.querySelectorAll('.container');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        showSection('attendance');
+
+        function markAttendance() {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    document.getElementById("attendance-status").innerHTML = "<span class='success'>Attendance Marked ✅</span>";
+                },
+                function() {
+                    document.getElementById("attendance-status").innerHTML = "<span class='error'>Location access denied.</span>";
+                }
+            );
+        }
+
+        function applyLeave() {
+            let leaveType = document.getElementById("leaveType").value;
+            let leaveDate = document.getElementById("leaveDate").value;
+            if (!leaveDate) {
+                document.getElementById("leave-status").innerHTML = "<span class='error'>Please select a date.</span>";
+                return;
+            }
+            let row = `<tr><td>${leaveDate}</td><td>${leaveType}</td><td>Pending</td></tr>`;
+            document.getElementById("leaveHistory").innerHTML += row;
+            document.getElementById("leave-status").innerHTML = "<span class='success'>Leave Applied ✅</span>";
+        }
+    </script>
+
+</body>
+</html>

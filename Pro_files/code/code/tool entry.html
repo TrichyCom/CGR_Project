@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Entry & Procurement Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function showNewCategoryField() {
+            document.getElementById('newCategoryField').style.display = 'block';
+        }
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center">
+                <h3>Tool Entry & Procurement Form</h3>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Tool Name</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tool Category</label>
+                        <div class="d-flex">
+                            <select class="form-select me-2" required>
+                                <option value="">Select Category</option>
+                                <option>Power Tool</option>
+                                <option>Hand Tool</option>
+                                <option>Safety Equipment</option>
+                            </select>
+                            <button type="button" class="btn btn-secondary" onclick="showNewCategoryField()">Add New</button>
+                        </div>
+                        <input type="text" id="newCategoryField" class="form-control mt-2" placeholder="Enter new category" style="display: none;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Purchase Date</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Purchase Price</label>
+                        <input type="number" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Supplier Details</label>
+                        <textarea class="form-control" rows="2" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Warranty & Expiry Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Certification (If Any)</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Storage Location</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tool Condition</label>
+                        <select class="form-select" required>
+                            <option value="">Select Condition</option>
+                            <option>New</option>
+                            <option>Good</option>
+                            <option>Needs Repair</option>
+                            <option>Broken</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Last Used (Project Name)</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Invoice/Document</label>
+                        <input type="file" class="form-control">
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

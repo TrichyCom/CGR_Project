@@ -1,0 +1,27 @@
+.yellowtext{
+    color: #C9D931;
+  
+}
+.bluetext{
+    color: #1A5D99;
+}
+.yellowbg{
+    background-color: #C9D931;
+  
+}
+.bluebg{
+    background-color: #1A5D99;
+}
+.buttonborder{
+
+    border: #C9D931 solid 3px;
+}
+.buttonborder:hover{
+    border: #C9D931 solid 3px;
+}
+.blueborder{
+    border-color:  #1A5D99;
+}
+.bg-successs{
+    background-color: #008000;
+}

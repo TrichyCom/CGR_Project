@@ -1,42 +1,72 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+
+
+.dropdown {
+    position: relative;
+    display: block;
   }
-  to {
-    transform: rotate(360deg);
+  .dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .dropdown-menu-open {
+    max-height: 200px;
+    transition: all 0.3s ease;
   }
-}
+  .dropdown-content {
+    font-weight: 400;
+    color: gray;
+    display: none;
+    position: fixed;
+    top: 30px;
+    background-color:rgba(255, 255, 255, 0.116);
+    backdrop-filter: blur(6px);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 10px 10px;
+    border-radius: 2px;
+  }
+  .lang {
+    font-size: 13px;
+    text-decoration: none;
+    width: 100%;
+    color:white;
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+    
+  }
+  .menu-item2 {
+    display: none;
+  }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
+  #language{
+    position: fixed;
+    top: 40px;
+    right: 260px;
+  }
+  #calender-drop{
+    position: fixed;
+    top: 40px;
+    right: 140px;
+  }
+  #message-drop{
+    position: fixed;
+    top: 40px;
+    right: 100px;
+  }
+  #system-drop{
+    position: fixed;
+    top: 40px;
+    right: 80px;
+  }
+  #notice-drop{
+    position: fixed;
+    top: 40px;
+    right: 70px;
+  }

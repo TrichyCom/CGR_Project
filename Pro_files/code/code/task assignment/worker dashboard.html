@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+        h2, h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .in-progress { color: blue; font-weight: bold; }
+        .completed { color: green; font-weight: bold; }
+        .pending { color: orange; font-weight: bold; }
+        .btn {
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            color: white;
+        }
+        .btn-start { background-color: #007bff; }
+        .btn-start:hover { background-color: #0056b3; }
+        .btn-complete { background-color: #28a745; }
+        .btn-complete:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Worker Dashboard</h2>
+        <ul>
+            <li onclick="showSection('tasks')">📌 My Tasks</li>
+            <li onclick="showSection('attendance')">👷 Attendance</li>
+            <li onclick="showSection('notifications')">🔔 Notifications</li>
+            <li onclick="showSection('payroll')">💰 Payroll</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- My Tasks -->
+        <div class="container" id="tasks">
+            <h3>My Assigned Tasks</h3>
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>Project</th>
+                    <th>Date</th>
+                    <th>Shift</th>
+                    <th>Supervisor</th>
+                    
+                </tr>
+                <tr>
+                    <td>Install Wiring</td>
+                    <td>Residential Tower</td>
+                    <td>2025-03-06</td>
+                    <td>Day</td>
+                    <td>XYZ</td>
+                    
+                </tr>
+            </table>
+        </div>
+
+        <!-- Attendance -->
+        <div class="container" id="attendance">
+            <h3>Attendance</h3>
+            <p><strong>Today's Status:</strong> Present</p>
+            <p><strong>Check-in:</strong> 8:00 AM</p>
+            <p><strong>Check-out:</strong> Pending</p>
+            <button class="btn btn-start">Check-Out</button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="container" id="notifications">
+            <h3>Notifications</h3>
+            <p>🔔 <strong>New Task Assigned</strong></p>
+            <p>📌 <strong>Reminder: Submit Attendance</strong></p>
+        </div>
+
+        <!-- Payroll -->
+        <div class="container" id="payroll">
+            <h3>Payroll & Work History</h3>
+            <table>
+                <tr>
+                    <th>Month</th>
+                    <th>Days Worked</th>
+                    <th>Salary</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>April 2025</td>
+                    <td>26</td>
+                    <td>₹30,000</td>
+                    <td class="completed">Paid</td>
+                </tr>
+                <tr>
+                    <td>May 2025</td>
+                    <td>15</td>
+                    <td>₹17,500</td>
+                    <td class="pending">Pending</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            let sections = document.querySelectorAll('.container');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        showSection('tasks'); // Show My Tasks by default
+    </script>
+
+</body>
+</html>

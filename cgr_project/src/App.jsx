@@ -1,33 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react'
 
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import './App.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import Signup from './Components/Signup&Login/Signup/Signup';
+import Login from './Components/Signup&Login//Login/Login';
+import DashboardAdmin from './Components/Admin/Dashboard_Admin/DashboardAdmin'
+import WorkerMng_Admin from './Components/Admin/WorkerMng_Admin/WorkerMng_Admin';
+import AddWorkerAdmin from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/AddWorkerAdmin';
+import AddWorkerFormTwoMain from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/AddWorkerFormTwoAdmin/AddWorkerFormTwoMain';
+import AddWorkerFormThreeMain from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/AddWorkerFormThreeAdmin/AddWorkerFormThreeMain';
+import WorkerTaskMng from './Components/Worker/WorkerTaskMng/WorkerTaskMng';
+import WorkerAttananceMng from './Components/Worker/WorkerAttananceMng/WorkerAttananceMng';
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Signup />} ></Route>
+          <Route path='/login' element={<Login />} ></Route>
+
+          {/* Admin */}
+          <Route path='/dashboardadmin' element={<DashboardAdmin />} ></Route>
+          <Route path='/workermngadmin' element={<WorkerMng_Admin />} ></Route>
+
+          {/* Addworkeradmin */}
+          <Route path='/addworkerformadmin' element={<AddWorkerAdmin />} ></Route>
+          <Route path='/addworkerformtwomain' element={<AddWorkerFormTwoMain />} ></Route>
+          <Route path='/addworkerformthreemain' element={<AddWorkerFormThreeMain />} ></Route>
+
+          {/* worker */}
+          {/* <Route path='/workerdashboard' element={<WorkerDashboard />} ></Route> */}
+          {/* <Route path='/taskmngworker' element={<WorkerDashboard />} ></Route> */}
+          {/* <Route path='/attanancemngworker' element={<WorkerDashboard />} ></Route> */}
+
+
+          <Route path='workertaskmng' element={<WorkerTaskMng />} ></Route>
+          <Route path='workerattmng' element={<WorkerAttananceMng />} ></Route>
+
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

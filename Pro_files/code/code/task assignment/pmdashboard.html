@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Manager Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none; /* Initially hidden */
+        }
+        h2, h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .progress-bar {
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 10px;
+            background-color: #28a745;
+            width: 60%;
+        }
+        .approved { color: green; font-weight: bold; }
+        .rejected { color: red; font-weight: bold; }
+        .pending { color: orange; font-weight: bold; }
+        .btn {
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-assign { background-color: #007bff; color: white; }
+        .btn-assign:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li onclick="showSection('overview')">🏗 Project Overview</li>
+            <li onclick="showSection('assign')">📌 Assign Tasks</li>
+            <li onclick="showSection('approval')">✅ Task Approvals</li>
+            <li onclick="showSection('attendance')">👷 Worker Attendance</li>
+            <li onclick="showSection('notifications')">🔔 Notifications</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Project Overview -->
+        <div class="container" id="overview">
+            <h3>Project Overview</h3>
+            <table>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Location</th>
+                    <th>Progress</th>
+                    <th>Deadline</th>
+                    <th>Workers Assigned</th>
+                </tr>
+                <tr>
+                    <td>Bridge Construction</td>
+                    <td>Site 1</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 60%;"></div>
+                        </div> 60%
+                    </td>
+                    <td>10 days left</td>
+                    <td>25</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Worker Task Assignment -->
+        <div class="container" id="assign">
+            <h3>Assign Tasks</h3>
+            <form action="submit_task.php" method="POST">
+                <label>Project:</label>
+                <input type="text" name="project_name" required>
+
+                <label>Worker Name:</label>
+                <input type="text" name="worker_name" required>
+
+                <label>Task:</label>
+                <input type="text" name="task" required>
+
+                <label>Task Date:</label>
+                <input type="date" name="task_date" required>
+
+                <label>Shift:</label>
+                <select name="shift">
+                    <option value="Day">Day</option>
+                    <option value="Night">Night</option>
+                </select>
+
+                <label>Supervisor:</label>
+                <input type="text" name="supervisor" required>
+
+                <input type="hidden" name="status" value="Pending Approval">
+
+                <button type="submit" class="btn btn-assign">Submit for Approval</button>
+            </form>
+        </div>
+
+        <!-- Task Approval Status -->
+        <div class="container" id="approval">
+            <h3>Task Approvals</h3>
+            <table>
+                <tr>
+                    <th>Worker Name</th>
+                    <th>Project</th>
+                    <th>Task</th>
+                    <th>Date</th>
+                    <th>Shift</th>
+                    <th>Status</th>
+                    <th>Rejection Reason</th>
+                </tr>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Residential Tower</td>
+                    <td>Install Wiring</td>
+                    <td>2025-03-06</td>
+                    <td>Day</td>
+                    <td class="approved">Approved</td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Worker Attendance -->
+        <div class="container" id="attendance">
+            <h3>Worker Attendance</h3>
+            <p><strong>Total Workers Today:</strong> 180</p>
+            <p><strong>Tasks in Progress:</strong> 75</p>
+            <p><strong>Tasks Completed Today:</strong> 50</p>
+            <p><strong>Workers on Leave:</strong> 15</p>
+        </div>
+
+        <!-- Notifications -->
+        <div class="container" id="notifications">
+            <h3>Notifications</h3>
+            <p>🔔 <strong>12 tasks need approval</strong></p>
+            <p>❌ <strong>3 tasks were rejected</strong></p>
+            <p>🚨 <strong>5 workers absent without notice</strong></p>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            let sections = document.querySelectorAll('.container');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        showSection('overview'); // Show overview by default
+    </script>
+
+</body>
+</html>

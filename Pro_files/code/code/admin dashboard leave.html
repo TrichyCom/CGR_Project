@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; height: 100vh; background: #007bff; color: white; padding: 20px; position: fixed; }
+        .sidebar h2 { text-align: center; margin-bottom: 20px; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li { padding: 15px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+        .sidebar ul li:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 20px; width: 100%; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none; }
+        h2, h3 { text-align: center; margin-bottom: 15px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .btn { padding: 8px; border: none; cursor: pointer; border-radius: 4px; color: white; }
+        .btn-approve { background-color: #28a745; }
+        .btn-approve:hover { background-color: #218838; }
+        .btn-reject { background-color: #dc3545; }
+        .btn-reject:hover { background-color: #c82333; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li onclick="showSection('attendance')">📌 Attendance Records</li>
+            <li onclick="showSection('leave')">📝 Leave Management</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Attendance Records -->
+        <div class="container" id="attendance">
+            <h3>Worker Attendance Records</h3>
+            <table>
+                <tr><th>Worker Name</th><th>Date</th><th>Status</th></tr>
+                <tr><td>John Doe</td><td>2025-03-07</td><td class="success">✅ Present</td></tr>
+                <tr><td>Jane Smith</td><td>2025-03-07</td><td class="error">❌ Absent</td></tr>
+            </table>
+        </div>
+
+        <!-- Leave Management -->
+        <div class="container" id="leave">
+            <h3>Leave Requests</h3>
+            <table>
+                <tr><th>Worker Name</th><th>Date</th><th>Type</th><th>Status</th><th>Action</th></tr>
+                <tr>
+                    <td>John Doe</td><td>2025-03-10</td><td>Sick Leave</td><td>Pending</td>
+                    <td>
+                        <button class="btn btn-approve" onclick="approveLeave(this)">Approve</button>
+                        <button class="btn btn-reject" onclick="rejectLeave(this)">Reject</button>
+                    </td>
+                </tr>
+            </table>
+
+            <h3>Leave History</h3>
+            <table>
+                <tr><th>Worker Name</th><th>Date</th><th>Type</th><th>Status</th></tr>
+                <tr><td>Jane Smith</td><td>2025-03-05</td><td>Paid Leave</td><td class="success">✅ Approved</td></tr>
+                <tr><td>Alan Brown</td><td>2025-02-28</td><td>Casual Leave</td><td class="error">❌ Rejected</td></tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            let sections = document.querySelectorAll('.container');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        showSection('attendance');
+
+        function approveLeave(button) { button.parentNode.previousSibling.innerHTML = "<span class='success'>✅ Approved</span>"; }
+        function rejectLeave(button) { button.parentNode.previousSibling.innerHTML = "<span class='error'>❌ Rejected</span>"; }
+    </script>
+
+</body>
+</html>

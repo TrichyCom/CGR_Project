@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Task Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+        .status-in-progress {
+            color: blue;
+            font-weight: bold;
+        }
+        .status-completed {
+            color: green;
+            font-weight: bold;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>My Assigned Tasks</h2>
+
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search tasks..." onkeyup="searchTasks()">
+
+    <table id="taskTable">
+        <tr>
+            <th>Task Name</th>
+            <th>Project</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Shift</th>
+            <th>Supervisor</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Install Wiring</td>
+            <td>Residential Tower A</td>
+            <td>Site 1</td>
+            <td>2025-03-06</td>
+            <td>Day</td>
+            <td>John Doe</td>
+            <td class="status-in-progress">In Progress</td>
+        </tr>
+        <tr>
+            <td>Plumbing Fix</td>
+            <td>Commercial Plaza</td>
+            <td>Site 3</td>
+            <td>2025-03-06</td>
+            <td>Night</td>
+            <td>Michael Lee</td>
+            <td class="status-pending">Pending</td>
+        </tr>
+        <tr>
+            <td>Concrete Mixing</td>
+            <td>Bridge Construction</td>
+            <td>Site 5</td>
+            <td>2025-03-06</td>
+            <td>Day</td>
+            <td>Sarah Wong</td>
+            <td class="status-completed">Completed</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    function searchTasks() {
+        let input = document.getElementById("searchInput").value.toUpperCase();
+        let table = document.getElementById("taskTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let td = tr[i].getElementsByTagName("td");
+            let found = false;
+            for (let j = 0; j < td.length; j++) {
+                if (td[j] && td[j].innerHTML.toUpperCase().indexOf(input) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+            tr[i].style.display = found ? "" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>
