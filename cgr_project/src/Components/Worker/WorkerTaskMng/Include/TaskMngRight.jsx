@@ -1,7 +1,9 @@
 import React from "react";
 import { Link} from "react-router-dom";
-
+import { useLocation } from 'react-router-dom';
 function TaskMngRight() {
+    const location = useLocation();
+    const finNo = location.state?.FinNo || "No FinNo provided"; // Fix: Match the key name
 
     return (
        <>
@@ -11,6 +13,7 @@ function TaskMngRight() {
                        <div class="pb-3">
                            <div class="d-lg-flex mb-lg-3 mb-2">
                                <h1 class="page-header mb-6 flex-1" id='data' >WORKERS MANAGEMENT</h1>
+                               <p>Welcome, Worker with Fin No: {finNo}</p>
                                <div class="row gx-2 pb-lg-3 pb-2"></div>
        
 

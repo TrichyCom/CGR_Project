@@ -78,13 +78,13 @@ app.post("/addworker", (req, res) => {
         // Ensure SelectFeilds is stored as a JSON string
     const selectFieldsString = JSON.stringify(data.SelectFeilds);
 
-    const query = `INSERT INTO addworker (EmpId, CompanyName, FullName, ExpYear, ContNum, BankAccNum, SelectFeilds, Department, Age, Gender,
+    const query = `INSERT INTO addworker (EmpId, EmpPosition, CompanyName, FirstName, LastName, ExpYear, ContNum, BankAccNum, SelectFeilds, Department, Age, Gender,
       EmergencyContNum, PanTaxId, SelectRole, FinNo, DOA, DOI, DO_Onboard, WP_No, PP_No, DOB,
       DO_ThumbPrint, DO_Renewal, WP_Expiry, PP_Expiry, SelectCourse, Category, Cert_No, DOE,
       SMSE, Rigger, ssrc_sssrc, Levels, DOI_Two, BalanceDays, WAHA_M, Singnel_Man)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const values = [
-      data.EmpId, data.CompanyName, data.FullName, data.ExpYear, data.ContNum, 
+      data.EmpId, data.EmpPosition, data.CompanyName, data.FirstName, data.LastName, data.ExpYear, data.ContNum, 
       data.BankAccNum,selectFieldsString, data.Department, data.Age, 
       data.Gender, data.EmergencyContNum, data.PanTaxId, data.SelectRole, data.FinNo, data.DOA, 
       data.DOI, data.DO_Onboard, data.WP_No, data.PP_No, data.DOB, data.DO_ThumbPrint, data.DO_Renewal, data.WP_Expiry, data.PP_Expiry,
@@ -119,6 +119,21 @@ app.post("/addworker", (req, res) => {
 //     });
 //   });
   
+
+
+// GET Worker by FinNo
+app.get('/addworker', (req, res) => {
+  const { FinNo } = req.query;
+  if (!FinNo) return res.status(400).json({ error: "FIN No is required" });
+
+  const sql = "SELECT FirstName, LastName, DOB FROM addworker WHERE FinNo = ?";
+  db.query(sql, [FinNo], (err, result) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      if (result.length === 0) return res.status(404).json({ error: "Worker not found" });
+
+      res.json(result[0]);
+  });
+});
 
 
 

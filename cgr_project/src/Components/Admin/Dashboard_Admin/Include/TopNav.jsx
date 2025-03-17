@@ -36,21 +36,15 @@ function TopNav() {
                 </div>
 
 
-                {/* <div className="brand">
-                    <a href="index.html" className="brand-logo w-100">
-                        <GiProgression className="fs-24px me-2 text-theme"/>
-                        <span className="brand-text fw-500 fs-14px">CGR</span>
-                    </a>
-                </div> */}
                 <div className="brand">
                     <img src={Logo} alt='logo' className='w-75'></img>
                 </div>
 
                     
-                <div className="menu">
+                {/* <div className="menu">
                     <div className="menu-item dropdown d-lg-flex d-none">
                         <a href="#" className="menu-link">
-                            {/* <span>1,859,050.12</span> */}
+                         
                         </a>
                     </div>
                     <div className="menu-item dropdown d-lg-flex d-none me-3">
@@ -103,9 +97,7 @@ function TopNav() {
                                             <div className="fw-semibold text-white">Dinner with Richard</div>
                                             <div> - Tom's Too Restaurant</div>
                                             <div className="d-flex align-items-center mt-2">
-                                                {/* <div className="flex-fill d-flex align-items-center">
-                                                    <img src={User3} alt width="16" className="me-2" /> Richard Leong
-                                                </div> */}
+                                               
                                                 <a href="#" className="ms-auto">Contact</a>
                                             </div>
                                         </div>
@@ -344,7 +336,7 @@ function TopNav() {
                     <div className="menu-item dropdown dropdown-mobile-full">
                         <a href="#" data-bs-toggle="dropdown" data-bs-display="static" className="menu-link d-flex align-items-center">
                             <div className="menu-img online me-sm-2 ms-lg-0 ms-n2">
-                                {/* <img src='#' alt="Profile" className /> */}
+                                
                             </div>
                             <div className="menu-text d-sm-block d-none">
                                 <span className="d-block"><span><span className="__cf_email__" data-cfemail="580d0b1d0a1619151d181f15191114761b1715">[email&#160;protected]</span></span></span>
@@ -360,7 +352,7 @@ function TopNav() {
                             <a className="dropdown-item" href="page_login.html">LOG OUT</a>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <form className="menu-search-float"  name="header_search_form">
                     <div className="menu-search-container">
                         <div className="menu-search-icon"><i className="bi bi-search"></i></div>

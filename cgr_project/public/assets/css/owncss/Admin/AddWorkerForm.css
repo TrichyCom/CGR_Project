@@ -1,0 +1,22 @@
+.checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px; 
+  }
+  
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+  }
+  
+
+
+
+
+
+
+
+
+  

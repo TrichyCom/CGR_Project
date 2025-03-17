@@ -15,6 +15,7 @@ const AddWorkerFormThreeAdmin = () => {
     SMSE: "",
     WAHA_M: "",
     Rigger: "",
+    ssrc_sssrc:"",
     Singnel_Man: "",
   });
 
@@ -22,28 +23,23 @@ const AddWorkerFormThreeAdmin = () => {
     const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
     setFormData((prevData) => ({ ...prevData, ...storedData }));
   }, []);
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = async () => {
-  //   localStorage.setItem("workerData", JSON.stringify(formData));
-  //   const finalData = JSON.parse(localStorage.getItem("workerData"));
+    // Handle navigation to next form
+    const handlePre = () => {
+      localStorage.setItem("workerData", JSON.stringify(formData));
+      navigate("/addworkerformtwomain");
+    };
 
-  //   try {
-  //     await axios.post("http://localhost:3001/addworker", finalData);
-  //     alert("Worker added successfully!");
-  //     localStorage.removeItem("workerData");
-  //     // navigate("/successpage");
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //   }
-  // };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    
     // Convert SelectFields array to a string before sending to the backend
     const formattedData = {
       ...formData,
@@ -64,6 +60,22 @@ const AddWorkerFormThreeAdmin = () => {
       const result = await response.json();
       console.log(result.message);
       alert("Worker added successfully!");
+      localStorage.removeItem("workerData");
+      setFormData({
+        SelectCourse: "",
+        Category: "",
+        Levels: "",
+        Cert_No: "",
+        DOI_Two: "",
+        DOE: "",
+        BalanceDays: "",
+        SMSE: "",
+        WAHA_M: "",
+        Rigger: "",
+        ssrc_sssrc:"",
+        Singnel_Man: "",
+        SelectFeilds: [], // Reset the array field
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -190,7 +202,7 @@ const AddWorkerFormThreeAdmin = () => {
                             <div className="col-xl-6">
                             <div className="mb-3">
                               <label className="form-label" htmlFor="exampleFormControlInput1">D.O.I</label>
-                              <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="D.O.I" onFocus={(e) => e.target.showPicker()} name="DOI" value={formData.DOI} onChange={handleChange}/>
+                              <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="D.O.I" onFocus={(e) => e.target.showPicker()} name="DOI_Two" value={formData.DOI_Two} onChange={handleChange}/>
                             </div>
                             </div>
                             </div>
@@ -272,7 +284,7 @@ const AddWorkerFormThreeAdmin = () => {
                     
                         <ul class="pagination pagination-sm mb-0 mx-auto justify-content-center">
                             {/* <li class="page-item "><Link to='/addworkerformadmin' class="page-link buttonborder border-2 fs-6 px-5">Previous</Link></li> */}
-                            <li class="page-item "><Link to='/addworkerformtwomain' class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4">Previous</Link></li>
+                            <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
                             
                             <li class="page-item"><span class="btn bluebg yellowtext border-3 fw-bold btn-sm d-flex button border fs-6 px-5" onClick={handleSubmit}>Submit</span></li>
                         </ul>
