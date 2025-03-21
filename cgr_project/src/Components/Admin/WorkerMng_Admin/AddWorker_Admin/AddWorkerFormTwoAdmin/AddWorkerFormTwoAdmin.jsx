@@ -19,28 +19,28 @@ const AddWorkerFormTwoAdmin = () => {
 
 
 
-  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // Excluding 'I' and 'O'
+  // const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // Excluding 'I' and 'O'
 
   // Function to generate Fin No
-  const generateFinNo = () => {
-    const firstLetter = letters.charAt(Math.floor(Math.random() * letters.length));
-    const numbers = Math.floor(1000000 + Math.random() * 9000000); // 7-digit number
-    const lastLetter = letters.charAt(Math.floor(Math.random() * letters.length));
-    return `${firstLetter}${numbers}${lastLetter}`;
-  };
+  // const generateFinNo = () => {
+  //   const firstLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+  //   const numbers = Math.floor(1000000 + Math.random() * 9000000); // 7-digit number
+  //   const lastLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+  //   return `${firstLetter}${numbers}${lastLetter}`;
+  // };
 
 
 
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
-    if (!formData.FinNo) {
-      formData.FinNo = generateFinNo();
-    }
+    // if (!formData.FinNo) {
+    //   formData.FinNo = generateFinNo();
+    // }
     setFormData((prevData) => ({
       ...prevData,
       ...storedData,
-      FinNo: storedData.FinNo || generateFinNo(), // Set FinNo only if not already stored
+      // FinNo: storedData.FinNo || generateFinNo(), // Set FinNo only if not already stored
     }));
   }, []);
 
@@ -131,7 +131,7 @@ const AddWorkerFormTwoAdmin = () => {
                     <div className="col-xl-6">
                       <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlInput1">FIN No</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="FIN No" name="FinNo" value={formData.FinNo} onChange={handleChange} readOnly />
+                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="FIN No" name="FinNo" value={formData.FinNo} onChange={handleChange} />
                       </div>
                       </div>
                       <div className="col-xl-6">

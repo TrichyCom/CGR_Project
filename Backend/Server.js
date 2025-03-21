@@ -2,6 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const multer = require("multer");
+const path = require("path");
 const cors = require('cors');
 app.use(cors());
 
@@ -30,12 +32,19 @@ db.connect((err) => {
 module.exports = db;
 
 
-
-
 app.use(bodyParser.json());
 
 
+app.use("/uploads", express.static("uploads"));
 
+// Configure Multer for File Storage
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
 
 
 // API to Add Worker
@@ -138,8 +147,48 @@ app.get('/addworker', (req, res) => {
 
 
 
+// addcertificate
+
+// app.post("/addcertificate", async (req, res) => {
+//   const { FinNo, BasicSafetyCourse, RopeAccessCourse, MetalScaffoldCourse, LiftingCourse } = req.body;
+
+//   try {
+//     await db.query(`
+//       INSERT INTO addcertificate (FinNo, BasicSafetyCourse, RopeAccessCourse, MetalScaffoldCourse, LiftingCourse)
+//       VALUES (?, ?, ?, ?, ?)`, [FinNo, BasicSafetyCourse || null, RopeAccessCourse || null, MetalScaffoldCourse || null, LiftingCourse || null]);
+
+//     res.json({ message: "Certificate data added successfully" });
+//   } catch (error) {
+//     res.status(500).json({ error: "Database insertion failed" });
+//   }
+// });
 
 
+
+app.post("/addcertificate", upload.any(), (req, res) => {
+  const { FinNo } = req.body;
+  let query = `INSERT INTO addcertificate (FinNo, BasicSafetyCourse, RopeAccessCourse, MetalScaffoldCourse, LiftingCourse, BasicSafetyCourseFile, RopeAccessCourseFile, MetalScaffoldCourseFile, LiftingCourseFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  const data = [
+    FinNo,
+    req.body.BasicSafetyCourse || null,
+    req.body.RopeAccessCourse || null,
+    req.body.MetalScaffoldCourse || null,
+    req.body.LiftingCourse || null,
+    req.files.find((file) => file.fieldname === "BasicSafetyCourse_file")?.filename || null,
+    req.files.find((file) => file.fieldname === "RopeAccessCourse_file")?.filename || null,
+    req.files.find((file) => file.fieldname === "MetalScaffoldCourse_file")?.filename || null,
+    req.files.find((file) => file.fieldname === "LiftingCourse_file")?.filename || null,
+  ];
+
+  db.query(query, data, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Database error" });
+    }
+    res.json({ message: "Certificates added successfully" });
+  });
+});
 
 
 

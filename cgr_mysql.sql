@@ -32,7 +32,7 @@ CREATE TABLE addworker (
     DO_Onboard VARCHAR(200) NULL,
     WP_No VARCHAR(200) NULL,
     PP_No VARCHAR(200) NULL,
-    DOB VARCHAR(200) NULL,
+    DOB VARCHAR(200) NOT NULL,
     DO_ThumbPrint VARCHAR(200) NULL,
     DO_Renewal VARCHAR(200) NULL,
     WP_Expiry VARCHAR(200) NULL,
@@ -56,3 +56,16 @@ CREATE TABLE addworker (
 drop table addworker;
 
 select * from addworker;
+
+
+-- addworker - addcertificate-- 
+
+create table addcertificate(Id INT PRIMARY KEY AUTO_INCREMENT,FinNo VARCHAR(200) NULL,BasicSafetyCourse VARCHAR(200) NULL,
+    RopeAccessCourse VARCHAR(200) NULL,
+    MetalScaffoldCourse VARCHAR(200) NULL,
+    LiftingCourse VARCHAR(200) NULL);
+
+
+drop table addcertificate;
+
+select * from addcertificate;

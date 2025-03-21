@@ -12,7 +12,7 @@ function TaskMngRight() {
              
                        <div class="pb-3">
                            <div class="d-lg-flex mb-lg-3 mb-2">
-                               <h1 class="page-header mb-6 flex-1" id='data' >WORKERS MANAGEMENT</h1>
+                               <h1 class="page-header mb-6 flex-1" id='data' >TASK MANAGEMENT</h1>
                                <p>Welcome, Worker with Fin No: {finNo}</p>
                                <div class="row gx-2 pb-lg-3 pb-2"></div>
        
