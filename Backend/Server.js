@@ -192,8 +192,152 @@ app.post("/addcertificate", upload.any(), (req, res) => {
 
 
 
+// add options
+
+// Fetch fields
+app.get("/feilds", (req, res) => {
+  db.query("SELECT * FROM feilds", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
 
 
+
+// Add new field
+app.post("/feilds", (req, res) => {
+  const { Feilds } = req.body;
+  db.query("INSERT INTO feilds (Feilds) VALUES (?)", [Feilds], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ id: result.insertId, Feilds });
+  });
+});
+
+// Delete field
+app.delete("/feilds/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM feilds WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Field deleted" });
+  });
+});
+
+
+// get feilds column 
+
+app.get("/feilds", (req, res) => {
+  db.query("SELECT Feilds FROM feilds", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+
+
+
+
+
+
+
+
+// add roles
+
+app.get("/roles", (req, res) => {
+  db.query("SELECT * FROM roles", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+app.post("/roles", (req, res) => {
+  const { Roles } = req.body;
+  db.query("INSERT INTO roles (Roles) VALUES (?)", [Roles], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ id: result.insertId, Roles });
+  });
+});
+
+
+app.delete("/roles/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM roles WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Role deleted successfully!" });
+  });
+});
+
+
+// get Roles column
+app.get("/roles", (req, res) => {
+  db.query("SELECT * FROM roles", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+
+
+
+
+
+// Department
+
+// Fetch all departments
+app.get("/departments", (req, res) => {
+  db.query("SELECT * FROM Department", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+// Add a new department
+app.post("/departments", (req, res) => {
+  const { Department } = req.body;
+  db.query("INSERT INTO Department (Department) VALUES (?)", [Department], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Department added successfully!" });
+  });
+});
+
+// Delete a department by ID
+app.delete("/departments/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM Department WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Department deleted successfully!" });
+  });
+});
+
+// particular column get in Department
+app.get("/departments", (req, res) => {
+  db.query("SELECT id, Department FROM Department", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+// worker table view
+
+app.get("/workers", (req, res) => {
+  const sql = "SELECT Id, EmpId, EmpPosition, FirstName, LastName, ContNum, FinNo, SelectFeilds, Gender FROM addworker";
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
 
 
 

@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 import '../../../../../../public/assets/css/owncss/Admin/AddWorkerForm.css'
 const AddWorkerFormOneAdmin = () => {
 
 
 
-  // const [selectedRoles, setSelectedRoles] = useState([]);
-
-  // const roles = ["1", "2", "3", "4", "5"];
-
-  // const handleCheckboxChange = (role) => {
-  //   setSelectedRoles((prevRoles) =>
-  //     prevRoles.includes(role)
-  //       ? prevRoles.filter((r) => r !== role)
-  //       : [...prevRoles, role]
-  //   );
-  // };  
-
 
 
   const navigate = useNavigate();
-  const roles = ["Electrician", "Plumber", "Welder", "Steel Fixer", "Painter"]; // Example role options
+  // const roles = ["Electrician", "Plumber", "Welder", "Steel Fixer", "Painter"]; 
+  const [roles, setRoles] = useState([]); // Store fetched roles
+
+  // Fetch roles from feilds table
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/feilds"); // Replace with your API URL
+      const roleNames = response.data.map((item) => item.Feilds); // Extract Feilds column
+      setRoles(roleNames);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
 
   const [formData, setFormData] = useState({
     EmpId: "",
@@ -127,6 +132,41 @@ const AddWorkerFormOneAdmin = () => {
   //   navigate("/addworkerformtwomain");
   // };
 
+
+
+  // add role
+  const [roless, setRoless] = useState([]); // Store roles from DB
+
+  useEffect(() => {
+    fetchRoless(); // Fetch roles on component load
+  }, []);
+
+  // Fetch roles from the database
+  const fetchRoless = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/roles"); // Replace with your API URL
+      setRoless(response.data);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+
+
+
+  // department
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/departments") // Update the API endpoint based on your backend route
+      .then((response) => {
+        setDepartments(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching departments:", error);
+      });
+  }, []);
   return (
     <>
     {/* <div>
@@ -255,7 +295,20 @@ const AddWorkerFormOneAdmin = () => {
                     <div className="col-xl-6">
                       <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlInput1">Department</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Department" name="Department" onChange={handleChange} value={formData.Department}/>
+                        <select
+      className="form-select"
+      id="exampleFormControlSelect1"
+      name="Department"
+      onChange={handleChange}
+      value={formData.Department}
+    >
+      <option value="">Select Department</option>
+      {departments.map((dept) => (
+        <option key={dept.id} value={dept.Department}>
+          {dept.Department}
+        </option>
+      ))}
+    </select>
                       </div>
                       </div>
                       </div>
@@ -400,11 +453,12 @@ const AddWorkerFormOneAdmin = () => {
                       <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlSelect1">Select Role</label>
                         <select className="form-select" id="exampleFormControlSelect1" name="SelectRole" onChange={handleChange} value={formData.SelectRole}>
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
+                        <option value="">Select a role</option>
+        {roless.map((role) => (
+          <option key={role.id} value={role.Roles}>
+            {role.Roles}
+          </option>
+        ))}
                         </select>
                       </div>
                       </div>

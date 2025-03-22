@@ -13,6 +13,8 @@ import AddWorkerFormTwoMain from './Components/Admin/WorkerMng_Admin/AddWorker_A
 import AddWorkerFormThreeMain from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/AddWorkerFormThreeAdmin/AddWorkerFormThreeMain';
 import WorkerTaskMng from './Components/Worker/WorkerTaskMng/WorkerTaskMng';
 import WorkerAttananceMng from './Components/Worker/WorkerAttananceMng/WorkerAttananceMng';
+import FormDynamic from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/FormDynamic/FormDynamic';
+import ViewWorker_Admin from './Components/Admin/WorkerMng_Admin/ViewWorker_Admin/ViewWorker_Admin';
 function App() {
 
   return (
@@ -31,14 +33,20 @@ function App() {
           <Route path='/addworkerformtwomain' element={<AddWorkerFormTwoMain />} ></Route>
           <Route path='/addworkerformthreemain' element={<AddWorkerFormThreeMain />} ></Route>
 
+           {/* AddOptions Addworkeradmin */}
+          <Route path='/formdynamic' element={<FormDynamic />} ></Route>
+          
+           {/* View particular worker data */}
+          <Route path='/viewworkerdata' element={<ViewWorker_Admin />} ></Route>
+
           {/* worker */}
           {/* <Route path='/workerdashboard' element={<WorkerDashboard />} ></Route> */}
           {/* <Route path='/taskmngworker' element={<WorkerDashboard />} ></Route> */}
           {/* <Route path='/attanancemngworker' element={<WorkerDashboard />} ></Route> */}
 
 
-          <Route path='workertaskmng' element={<WorkerTaskMng />} ></Route>
-          <Route path='workerattmng' element={<WorkerAttananceMng />} ></Route>
+          <Route path='/workertaskmng' element={<WorkerTaskMng />} ></Route>
+          <Route path='/workerattmng' element={<WorkerAttananceMng />} ></Route>
 
         </Routes>
       </BrowserRouter>

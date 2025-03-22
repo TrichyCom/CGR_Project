@@ -213,33 +213,6 @@ const handleAddCertificate = (certificateName) => {
                         <div className="row">
                         <div className="col-xl-6">
                             <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlSelect1">Select Course</label>
-                              <select className="form-select" id="exampleFormControlSelect1" name="SelectCourse" value={formData.SelectCourse} onChange={handleChange}>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                              </select>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                          
-                            </div>
-                            </div>
-                            {/* <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlFile1">File input</label>
-                              <input type="file" className="form-control" id="exampleFormControlFile1" />
-                            </div> */}
-                         
-                          
-                        </div>
-
-
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
                               <label className="form-label" htmlFor="exampleFormControlSelect1">Category</label>
                               <select className="form-select" id="exampleFormControlSelect1" name="Category" value={formData.Category} onChange={handleChange}>
                                 <option>1</option>

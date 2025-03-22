@@ -1,7 +1,22 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import '../../../../../public/assets/css/owncss/SignupLogin.css'
 import { Link } from 'react-router-dom'
+import { Icon } from "@iconify/react";
+import axios from "axios";
 function WorkerMngRight(){
+
+    const [workers, setWorkers] = useState([]);
+
+    useEffect(() => {
+      axios
+        .get("http://localhost:3001/workers") 
+        .then((response) => {
+          setWorkers(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching worker data:", error);
+        });
+    }, []);
     return(
         <>
         <div>
@@ -11,188 +26,65 @@ function WorkerMngRight(){
                         <h1 class="page-header mb-6 flex-1" id='data' >WORKERS MANAGEMENT</h1>
                         <div class="row gx-2 pb-lg-3 pb-2"></div>
 
+                        <span class="d-none d-lg-flex align-items-center mx-2">
+                        <Link to="/formdynamic" className="btn yellowtext btn-sm d-flex pe-3 fw-bold buttonborder" >
+                                <span class="iconify fs-18px me-2 ms-n1" data-icon="solar:refresh-bold-duotone"></span>
+                                ADD FORM OPTIONS
+                            </Link>
+                            </span>
                         <span class="d-none d-lg-flex align-items-center">
                          
                             <Link to="/addworkerformadmin" className="btn yellowtext bluebg btn-sm d-flex pe-3 fw-bold buttonborder" >
                                 <span class="iconify fs-18px me-2 ms-n1" data-icon="solar:refresh-bold-duotone"></span>
                                 ADD WORKER +
                             </Link>
+                        
                         </span>
                     </div>
-                    <div class="row gx-2 pb-lg-3 pb-2">
-                        <div class="col-lg-6">
-                            <div class="position-relative">
-                                <input type="text" class="form-control ps-35px" placeholder="Search by products title or ID..." />
-                                <button class="btn position-absolute start-2 top-0 shadow-none"><iconify-icon icon="ph:magnifying-glass-duotone" class="menu-icon"></iconify-icon></button>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 d-lg-block d-none">
-                            <Link to="#" class="btn btn-secondary d-flex align-items-center" data-bs-toggle="dropdown">
-                                <span class="iconify fs-20px my-n1 me-2 ms-n1 text-theme" data-icon="solar:calendar-search-linear"></span>
-                                Date Range
-                            </Link>
-                            <ul class="dropdown-menu">
-                                <li><Link class="dropdown-item d-flex align-items-center" ><span class="iconify fs-20px my-n1 me-2 ms-n1 text-body text-opacity-50" data-icon="solar:calendar-line-duotone"></span> Last 7 Days</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><span class="iconify fs-20px my-n1 me-2 ms-n1 text-body text-opacity-50" data-icon="solar:calendar-line-duotone"></span> Last 30 Days</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><span class="iconify fs-20px my-n1 me-2 ms-n1 text-body text-opacity-50" data-icon="solar:calendar-line-duotone"></span> This Month</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><span class="iconify fs-20px my-n1 me-2 ms-n1 text-body text-opacity-50" data-icon="solar:calendar-line-duotone"></span> Last Month</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><span class="iconify fs-20px my-n1 me-2 ms-n1 text-body text-opacity-50" data-icon="solar:calendar-line-duotone"></span> Custom Range</Link></li>
-                            </ul>
-                        </div>
-                        <div class="col-lg-2 d-lg-block d-none">
-                            <Link to="#" class="btn btn-secondary d-flex align-items-center" data-bs-toggle="dropdown">
-                                <span class="iconify fs-20px my-n1 me-2 ms-n1 text-theme" data-icon="solar:tag-linear"></span>
-                                Status
-                                <i class="fa ms-auto fa-chevron-down"></i>
-                            </Link>
-                            <ul class="dropdown-menu">
-                                <li><Link class="dropdown-item d-flex align-items-center" ><i class="fa fa-circle fs-7px me-2 ms-n1 text-success"></i> Active</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><i class="fa fa-circle fs-7px me-2 ms-n1 text-body text-opacity-25"></i> Inactive</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><i class="fa fa-circle fs-7px me-2 ms-n1 text-danger"></i> Removed</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><i class="fa fa-circle fs-7px me-2 ms-n1 text-warning"></i> Pending</Link></li>
-                                <li><Link class="dropdown-item d-flex align-items-center" ><i class="fa fa-circle fs-7px me-2 ms-n1 text-primary"></i> Archived</Link></li>
-                            </ul>
-                        </div>
 
-                        <div class="col-lg-2 d-lg-block d-none">
-                            <Link to="#" class="btn btn-secondary d-flex align-items-center" data-bs-toggle="dropdown">
-                                <span class="iconify fs-20px my-n1 me-2 ms-n1 text-theme" data-icon="solar:tuning-linear"></span>
-                                More filters
-                                <i class="fa ms-auto fa-chevron-down"></i>
-                            </Link>
-                            <ul class="dropdown-menu">
-                                <li><Link class="dropdown-item" >High Priority</Link></li>
-                                <li><Link class="dropdown-item" >Low Priority</Link></li>
-                                <li><Link class="dropdown-item" >Overdue</Link></li>
-                                <li><Link class="dropdown-item" >Completed</Link></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><Link class="dropdown-item" >Custom Filter 1</Link></li>
-                                <li><Link class="dropdown-item" >Custom Filter 2</Link></li>
-                            </ul>
-                        </div>
-                    </div>
 
                 </div>
                 <div class="table-responsive" id="table">
                     <table class="table table-thead-sticky table-tfoot-sticky table-tbody-bordered table-px-10px table-py-4px table-sm table-striped text-nowrap mb-0 fs-11px">
-                        <thead class="text-uppercase">
-                            <tr>
-
-                                <th class="text-white">No.</th>
-                                <th class="text-white">Name</th>
-                                <th class="text-white">Category</th>
-                                <th class="text-white">Item Name</th>
-                                <th class="text-white">Status</th>
-                             
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                 
-                                <td>1.</td>
-                                <td>Tan Wei Ming</td>
-                                <td>Structural Work</td>
-                                <td>Concrete, Steel, Wood Framing</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                            
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>2.</td>
-                                <td>Lim Jia Hui</td>
-                                <td>Masonry</td>
-                                <td>Brickwork, Stonework, Blockwork</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                              
-                 
-                            </tr>
-                            <tr>
-                                 
-                                <td>3.</td>
-                                <td>Ng Wei Ling</td>
-                                <td>Electrical</td>
-                                <td>Wiring, Lighting, Panels</td>
-                                <td> <span className="bg-danger px-3 py-1">Inactive</span></td>
-                              
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>4.</td>
-                                <td>Chong Kai Wen</td>
-                                <td>Plumbing</td>
-                                <td>Pipes, Fixtures, Drainage</td>
-                                <td> <span className="bg-danger px-3 py-1">Inactive</span></td>
-                                
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>5.</td>
-                                <td>Lee Zhi Hao</td>
-                                <td>HVAC</td>
-                                <td>Heating, Ventilation, Air Conditioning</td>
-                                <td> <span className="bg-danger px-3 py-1">Inactive</span></td>
-                               
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>6.</td>
-                                <td>Goh Mei Xin</td>
-                                <td>Finishing Works</td>
-                                <td>Painting, Plastering, Flooring</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                                
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>7.</td>
-                                <td>Toh Jun Hao</td>
-                                <td>Roofing</td>
-                                <td>Shingles, Metal Roofing, Waterproofing</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                                
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>8.</td>
-                                <td>Teo Yi Xuan</td>
-                                <td>Site Preparation</td>
-                                <td>Excavation, Land Grading, Demolition</td>
-                                <td> <span className="bg-danger px-3 py-1">Inactive</span></td>
-                               
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>9.</td>
-                                <td>Wong Sheng Yi</td>
-                                <td>Carpentry & Joinery</td>
-                                <td>Doors, Windows, Cabinets</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                                
-                                
-                            </tr>
-                            <tr>
-                                 
-                                <td>10.</td>
-                                <td>Ho Xin Rui</td>
-                                <td>Safety & Compliance</td>
-                                <td>Scaffolding, PPE, Inspections</td>
-                                <td> <span className="bg-successs px-4 py-1">Active</span></td>
-                              
-                                
-                            </tr>
-
-                        </tbody>
-                        <tfoot>
-                      
-                        </tfoot>
+                         <thead className="text-uppercase bg-light">
+                <tr>
+                  <th className="text-dark fw-bold">No.</th>
+                  <th className="text-dark fw-bold">Emp ID</th>
+                  <th className="text-dark fw-bold">Emp Position</th>
+                  <th className="text-dark fw-bold">Name</th>
+                  <th className="text-dark fw-bold">Cont Number</th>
+                  <th className="text-dark fw-bold">FIN No</th>
+                  <th className="text-dark fw-bold">Fields</th>
+                  <th className="text-dark fw-bold">Gender</th>
+                  <th className="text-dark fw-bold">View</th>
+                </tr>
+              </thead>
+              <tbody>
+              {workers.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-3">
+                    <Icon icon="mdi:account-off-outline" className="fs-48px text-muted" /><br></br>
+                      No Employee Record
+                    </td>
+                  </tr>
+                ) : (
+                  workers.map((worker, index) => (
+                    <tr key={worker.Id}>
+                      <td>{index + 1}</td>
+                      <td>{worker.EmpId}</td>
+                      <td>{worker.EmpPosition}</td>
+                      <td>
+                        {worker.FirstName} {worker.LastName}
+                      </td>
+                      <td>{worker.ContNum}</td>
+                      <td>{worker.FinNo}</td>
+                      <td>{worker.SelectFeilds}</td>
+                      <td>{worker.Gender}</td>
+                      <td><span className="btn btn-sm border p-0 px-3">All Details</span></td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
                     </table>
                 </div>
             </div>
