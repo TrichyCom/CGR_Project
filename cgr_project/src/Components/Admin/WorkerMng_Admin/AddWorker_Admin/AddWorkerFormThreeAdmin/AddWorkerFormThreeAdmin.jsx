@@ -1,104 +1,81 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Icon } from "@iconify/react";
-import { FaTrash } from "react-icons/fa"; // Import delete icon
 
 const AddWorkerFormThreeAdmin = () => {
   const navigate = useNavigate();
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedCertificates, setSelectedCertificates] = useState([]);
-  const [showCertificateList, setShowCertificateList] = useState(false);
-  const [FinNo, setFinNo] = useState("");
-  const [certificateFiles, setCertificateFiles] = useState({});
-
-  const certificateOptions = [
-    "BasicSafetyCourse",
-    "RopeAccessCourse",
-    "MetalScaffoldCourse",
-    "LiftingCourse",
-    "BasicSafetyCourse",
-    "RopeAccessCourse",
-    "MetalScaffoldCourse",
-    "LiftingCourse",
-  ];
-
-  // const handleSelectCertificate = () => {
-  //   setShowCertificateList(!showCertificateList);
-  // };
-
-  // const handleAddCertificate = (certificateName) => {
-  //   if (!selectedCertificates.includes(certificateName)) {
-  //     setSelectedCertificates([...selectedCertificates, certificateName]);
-  //   }
-  //   setShowPopup(true); // Close the popup after selection
-  // };
-
-
-
-  const fileInputRef = useRef(null);
-
-const handleAddCertificate = (certificateName) => {
-  if (!selectedCertificates.includes(certificateName)) {
-    setSelectedCertificates([...selectedCertificates, certificateName]);
-  }
-  
-  setShowPopup(true); // Ensure popup opens
-
-  // Wait for state update, then trigger file input click
-  setTimeout(() => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, 100);
-};
-
-
-
-
-  const handleSelectCertificate = () => {
-    console.log("Button clicked! Toggling certificate list.");
-    setShowCertificateList(!showCertificateList);
-    setShowPopup(true); // Open the popup
-  };
-  
-
-  const handleFileChange = (certificateName, event) => {
-    setCertificateFiles({
-      ...certificateFiles,
-      [certificateName]: event.target.files[0],
-    });
-  };
-
   const [formData, setFormData] = useState({
-    SelectCourse: "",
+    FinNo: "",
+    CertificateName: "",
     Category: "",
-    Levels: "",
-    Cert_No: "",
-    DOI: "",
-    DOE: "",
+    CertNo: "",
+    Expiry: "",
     BalanceDays: "",
-    SMSE: "",
-    WAHA_M: "",
+    Levels: "",
+    Smse: "",
+    IssueDate: "",
+    WahaM: "",
     Rigger: "",
-    ssrc_sssrc: "",
-    Singnel_Man: "",
-    SelectFields: [], // Corrected spelling
+    SignalMan: "",
+    SsrcSssrc: "",
+    CourseTitle: "",
+    CourseTitleTwo: "",
   });
+
+  const [certificateFile, setCertificateFile] = useState(null);
+  const [certificateData, setCertificateData] = useState([]);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
     setFormData((prevData) => ({ ...prevData, ...storedData }));
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // Fetch data function
+  const fetchData = () => {
+    if (formData.FinNo) {
+      axios.get(`http://localhost:3001/certificates/${formData.FinNo}`)
+        .then((response) => {
+          setCertificateData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching certificate data:", error);
+        });
+    }
   };
+
+  // Auto-refresh every 5 seconds
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000); // Refresh every 5 sec
+    return () => clearInterval(interval);
+  }, [formData.FinNo]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files.length > 0) {
+      setCertificateFile(e.target.files[0]);
+    }
+  };
+
+
 
   // Handle navigation to previous form
   const handlePre = () => {
     localStorage.setItem("workerData", JSON.stringify(formData));
     navigate("/addworkerformtwomain");
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/certificates/${id}`);
+      setCertificateData(certificateData.filter((cert) => cert.Id !== id));
+    } catch (error) {
+      console.error("Error deleting certificate:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -145,25 +122,6 @@ const handleAddCertificate = (certificateName) => {
         SelectFields: [],
       });
 
-      // Form data for certificate upload
-      const certificateFormData = new FormData();
-      certificateFormData.append("FinNo", formData.FinNo);
-
-      selectedCertificates.forEach((certificate) => {
-        certificateFormData.append(certificate, "Yes");
-        if (certificateFiles[certificate]) {
-          certificateFormData.append(`${certificate}_file`, certificateFiles[certificate]);
-        }
-      });
-
-      await axios.post("http://localhost:3001/addcertificate", certificateFormData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      alert("Certificates added successfully!");
-      setSelectedCertificates([]);
-      setCertificateFiles({});
-      setFinNo("");
 
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -172,343 +130,629 @@ const handleAddCertificate = (certificateName) => {
 
 
 
-  const handleClosePopup = () => {
-    setShowPopup(false); // Close the popup
+
+
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+
+    if (certificateFile) {
+      formDataToSend.append("CertificateFile", certificateFile);
+    }
+
+    try {
+      await axios.post("http://localhost:3001/certificates", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      alert("Certificate Added Successfully!");
+      // Clear file state
+      setCertificateFile(null);
+
+      // **Manually clear file input**
+      document.getElementById("fileInput").value = "";
+
+      // Clear form but keep FinNo to avoid losing data
+      setFormData((prev) => ({
+        ...prev,
+        CertificateName: "",
+        Category: "",
+        CertNo: "",
+        CertNoTwo: "",
+        Expiry: "",
+        BalanceDays: "",
+        Levels: "",
+        Smse: "",
+        IssueDate: "",
+        WahaM: "",
+        Rigger: "",
+        SignalMan: "",
+        SsrcSssrc: "",
+        CourseTitle: "",
+        CourseTitleTwo: "",
+
+      }));
+
+      // Refresh GET request after upload
+      fetchData();
+
+    } catch (error) {
+      alert("Failed to add certificate.");
+    }
   };
-
-
-  // Function to remove a specific certificate
-  const handleRemoveCert = (indexToRemove) => {
-    setSelectedCertificates((prevCerts) =>
-      prevCerts.filter((_, index) => index !== indexToRemove)
-    );
-  };
-
-
 
   return (
-    <>
+    <div id="content" className="app-content">
+      <div className="container">
+        <h1 className="page-header bluetext fw-bold">ADD WORKER</h1>
+        <hr className="mb-4 opacity-3" />
+        <div className="card">
+          <div className="card-header yellowtext fs-6 fw-bold">WORKER DETAILS</div>
+          <div className="card-body pb-2">
+            <form>
+              {/* <div className="mb-3">
+                <label className="form-label">FinNo</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="FinNo"
+                  value={formData.FinNo}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div> */}
 
-
-<div id="content" className="app-content">
-      <div className="conainer">
-        <div className="row justify-content-center">
-          <div className="col-xl-11">
-            <div className="row">
-              <div className="col-xl-12">
-             
-                <h1 className="page-header bluetext fw-bold">
-                 ADD WORKER <small>please enter worker details here...</small>
-                </h1>
-                <hr className="mb-4 opacity-3" />
-                <div id="formControls" className="mb-5">
-              {/* page 1     */}
-                  <div className="card">
-                    <div className="card-header d-flex justify-content-between align-items-center yellowtext fs-6 fw-bold">
-                      WORKER DETAILS
-                   
-                    </div>
-                    <div className="card-body pb-2">
-                      <form>
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlSelect1">Category</label>
-                              <select className="form-select" id="exampleFormControlSelect1" name="Category" value={formData.Category} onChange={handleChange}>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                              </select>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlSelect1">Level</label>
-                              <select className="form-select" id="exampleFormControlSelect1" name="Levels" value={formData.Levels} onChange={handleChange}>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                              </select>
-                            </div>
-                            </div>
-                   
-                            </div>
-
-
-
-                            
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">Cert No.</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Cert No" name="Cert_No" value={formData.Cert_No} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">D.O.I</label>
-                              <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="D.O.I" onFocus={(e) => e.target.showPicker()} name="DOI_Two" value={formData.DOI_Two} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            </div>
-
-
-
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">D.O.E</label>
-                              <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="D.O.E" onFocus={(e) => e.target.showPicker()} name="DOE" value={formData.DOE} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">Balance Days</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Balance Days" onFocus={(e) => e.target.showPicker()} name="BalanceDays" value={formData.BalanceDays} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            </div>
-
-
-
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">SMSE</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="SMSE" name="SMSE" value={formData.SMSE} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">WAHA/M</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="WAHA/M" onFocus={(e) => e.target.showPicker()} name="WAHA_M" value={formData.WAHA_M} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            </div>
-
-
-
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">Rigger</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Rigger" name="Rigger" value={formData.Rigger} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">Singnel Man</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="singnel Man" onFocus={(e) => e.target.showPicker()} name="Singnel_Man" value={formData.Singnel_Man} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            </div>
-                        <div className="row">
-                        <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">SSRC/SSSRC</label>
-                              <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="ssrc/sssrc" name="ssrc_sssrc" value={formData.ssrc_sssrc} onChange={handleChange}/>
-                            </div>
-                            </div>
-                            <div className="col-xl-6">
-                            <div className="mb-3">
-                              <label className="form-label" htmlFor="exampleFormControlInput1">Upload Certificate</label>
-                                    {/* <div className="mb-3">
-        <label className="form-label">FinNo</label>
-        <input
-          type="text"
-          className="form-control"
-          value={formData.FinNo}
-          onChange={(e) => setFinNo(e.target.value)}
-          placeholder="Enter FinNo"
-        />
-      </div> */}
-{/* 
-      <div className="mb-3">
-      <button 
-  type="button" 
-  className="btn btn-primary" 
-  onClick={handleSelectCertificate}
->
-  Select Certificate
-</button>
-<span>{formData.FinNo}</span>
-
-      </div>
-
-      {showCertificateList && (
-        <div className="certificate-list">
-          {certificateOptions.map((certificate, index) => (
-            <div key={index} className="d-flex align-items-center mb-2">
-              <span className="me-3">{certificate}</span>
-              <button
-              type="button" 
-                className="btn btn-success me-2"
-                onClick={() => handleAddCertificate(certificate)}
-              >
-                Add
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <h4 className="mt-4">Selected Certificates</h4>
-      {selectedCertificates.map((cert, index) => (
-        <div key={index} className="mb-3">
-          <span>{cert}</span>
-          <input
-            type="file"
-            className="form-control mt-2"
-            onChange={(e) => handleFileChange(cert, e)}
-          />
-        </div>
-      ))} */}
-
-
-
-        <div className="mb-3">
-          <button type="button" className="btn btn-primary" onClick={handleSelectCertificate}>
-            Upload Certificate
-          </button>
-          <span className="ms-3">{formData.FinNo}</span>
-        </div>
-
-
-
-
-      {/* Custom Popup Modal */}
-      {showPopup && (
-        <div className="popup-overlay" onClick={handleClosePopup}>
-          <div className="popup-content border border-5 p-4 bg-white" onClick={(e) => e.stopPropagation()}>
-
-<div className="row">
-  <div className="col-5 leftborder">
-  <h4 className="bluebg yellowtext py-2">Select a Certificate</h4>
-            <div className="certificate-list">
-              {certificateOptions.map((certificate, index) => (
-                <div key={index} className="certificate-item  border-2 border-light border-bottom pb-1">
-                  <Icon icon="mdi:certificate" className="certificate-icon text-warning" />
-                  <span>{certificate}</span>
-                  <button type="button" className="btn btn-success " onClick={() => handleAddCertificate(certificate)}>
-                    Add
-                  </button>
-                </div>
-              ))}
-            </div>
-    </div>
-  <div className="col-7">
-           
-  <h4 className="bluebg yellowtext py-2">Selected Certificates</h4>
-
-<table className="border-collapse mt-2 mx-auto">
-  <thead className="text-center mx-auto">
-    <tr className="bg-gray-100">
-      <th className="border border-gray-300 px-4 py-2">S.No</th>
-      <th className="border border-gray-300 px-4 py-2 w-50">Certificate Name</th>
-      <th className="border border-gray-300 px-4 py-2 w-50">Upload File</th>
-      <th className="border border-gray-300 px-4 py-2">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-     {selectedCertificates.length === 0 ? (
-    <tr className="">
-      <td colSpan="4" className="text-center py-4 my-auto">
-        <Icon icon="mdi:certificate" className="text-gray-400 cericon" />
-        <p className="text-gray-500 mt-2">No certificates selected</p>
-      </td>
-    </tr>
-  ) : 
-    selectedCertificates.map((cert, index) => (
-      <tr key={index} className="border border-gray-300">
-        <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
-        <td className="border border-gray-300 px-4 py-2">{cert}</td>
-        <td className="border border-gray-300 px-4 py-2">
-          <input
-            type="file"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={(e) => handleFileChange(cert, e)}
-          />
-          {/* <button
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-            onClick={() => fileInputRef.current.click()}
-          >
-            Upload
-          </button> */}
-        </td>
-        <td className="border border-gray-300 px-4 py-2 text-center">
-          <FaTrash
-            className="text-danger"
-            onClick={() => handleRemoveCert(index)}
-          />
-        </td>
-      </tr>
-    ))}
-
-  </tbody>
-</table>
-    </div>
-  </div>
-
-
-
-            <button className="popup-close" onClick={handleClosePopup}>
-              Back
-            </button>
-          </div>
-        </div>
-      )}
-
-
-
-
-
-
-                            </div>
-                            </div>
-                            </div>
-
-
-
-
-
-                      </form>
-
-
-                      <div class="d-lg-flex align-items-center mb-n2 py-4 my-3">
-                       
-                    
-                        <ul class="pagination pagination-sm mb-0 mx-auto justify-content-center">
-                            {/* <li class="page-item "><Link to='/addworkerformadmin' class="page-link buttonborder border-2 fs-6 px-5">Previous</Link></li> */}
-                            <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
-                            
-                            <li class="page-item"><span class="btn bluebg yellowtext border-3 fw-bold btn-sm d-flex button border fs-6 px-5" onClick={handleSubmit}>Submit</span></li>
-                        </ul>
-                    </div>
-
-
-
-                    </div>
+              <div className="row">
+                <div className="col-xl-6">
+                  <div className="mb-3">
+                    <label className="form-label">Certificate</label>
+                    <select
+                      className="form-select"
+                      name="CertificateName"
+                      value={formData.CertificateName}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Certificate</option>
+                      <option value="BasicSafetyCourse">Basic Safety Course</option>
+                      <option value="RopeAccessCourse">Rope Access Course</option>
+                      <option value="MetalScaffoldCourse">MetalScaffoldCourse</option>
+                      <option value="WorkingAtHeightCourse">WorkingAtHeightCourse</option>
+                      <option value="LiftingCourse">LiftingCourse</option>
+                      <option value="Gondola">Gondola</option>
+                      <option value="ScissorsLift3a(MEWP)">ScissorsLift3a(MEWP)</option>
+                      <option value="BoomLift3b(MEWP)">BoomLift3b(MEWP)</option>
+                      <option value="AdditionalCourse">AdditionalCourse</option>
+                    </select>
                   </div>
-
-
-
-
-                  
+                </div>
+                <div className="col-xl-6">
+                  <div className="mb-3">
+                    <label className="form-label">Upload Certificate</label>
+                    <input
+                      type="file"
+                      id="fileInput"  // Add this ID
+                      className="form-control"
+                      onChange={handleFileChange}
+                      accept="*/*"
+                    />
+                  </div>
                 </div>
               </div>
+              {/* BasicSafetyCourse */}
+              {formData.CertificateName === "BasicSafetyCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">Category</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Category"
+                          value={formData.Category}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">Expiry</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Expiry"
+                          value={formData.Expiry}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">BalanceDays</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="BalanceDays"
+                          value={formData.BalanceDays}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </>
+              )}
+
+              {/* RopeAccessCourse */}
+              {formData.CertificateName === "RopeAccessCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">Levels</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Levels"
+                          value={formData.Levels}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">Expiry</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Expiry"
+                          value={formData.Expiry}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </>
+              )}
+              {/* MetalScaffoldCourse */}
+
+              {formData.CertificateName === "MetalScaffoldCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">SMSE</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Smse"
+                          value={formData.Smse}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">IssueDate</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="IssueDate"
+                          value={formData.IssueDate}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </>
+              )}
+
+              {/* WorkingAtHeightCourse */}
+
+              {formData.CertificateName === "WorkingAtHeightCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">WAHA/M</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="WahaM"
+                          value={formData.WahaM}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                  </div>
+                </>
+              )}
+
+              {/* LiftingCourse */}
+
+              {formData.CertificateName === "LiftingCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">Rigger</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Rigger"
+                          value={formData.Rigger}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">SignalMan</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="SignalMan"
+                          value={formData.SignalMan}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">IssueDate</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="IssueDate"
+                          value={formData.IssueDate}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </>
+              )}
+
+              {/* Gondola */}
+
+              {formData.CertificateName === "Gondola" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">SSRC/SSSRC</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="SsrcSssrc"
+                          value={formData.SsrcSssrc}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                  </div>
+                </>
+              )}
+              {/* ScissorsLift3a(MEWP) */}
+
+
+              {formData.CertificateName === "ScissorsLift3a(MEWP)" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">Expiry</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Expiry"
+                          value={formData.Expiry}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                  </div>
+                </>
+              )}
+
+              {/* BoomLift3b(MEWP) */}
+
+              {formData.CertificateName === "BoomLift3b(MEWP)" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">Expiry</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Expiry"
+                          value={formData.Expiry}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-6">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                  </div>
+                </>
+              )}
+
+
+              {/* AdditionalCourse */}
+
+              {formData.CertificateName === "AdditionalCourse" && (
+                <>
+                  <div className="certificateinputheight">
+                  <div className="row">
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CourseTitle</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CourseTitle"
+                          value={formData.CourseTitle}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNo"
+                          value={formData.CertNo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">Expiry</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="Expiry"
+                          value={formData.Expiry}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CourseTitle 2</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CourseTitleTwo"
+                          value={formData.CourseTitleTwo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">CertNo 2</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="CertNoTwo"
+                          value={formData.CertNoTwo}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-4">
+                      <div className="mb-3">
+                        <label className="form-label">IssueDate</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="IssueDate"
+                          value={formData.IssueDate}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </>
+              )}
+
+              <div className="mx-auto text-center">
+                <button type="submit" className="btn btn-primary w-25 fw-bold rounded" onClick={handleUpload}>
+                  Upload
+                </button>
+              </div>
+
+            </form>
+<div className="border border-3 mt-3"></div>
+            <div className="mt-4">
+              <h3>Uploaded Certificates</h3>
+              {certificateData.length > 0 ? (
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>FinNo</th>
+                      <th>Certificate Name</th>
+                      <th>File</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {certificateData.map((cert) => (
+                      <tr key={cert.Id}>
+                        <td>{cert.FinNo}</td>
+                        <td>{cert.CertificateName}</td>
+                        <td>
+                          {cert.CertificateFile && (
+                            <a
+                              href={`http://localhost:3001/uploads/${cert.CertificateFile}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View File
+                            </a>
+                          )}
+                        </td>
+                        <td> <span
+                          className="btn btn-danger"
+                          onClick={() => handleDelete(cert.Id)}
+                        >Delete</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No certificates found for this FinNo.</p>
+              )}
             </div>
+
+            <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
+              <ul className="pagination pagination-sm mb-0 mx-auto justify-content-center">
+                <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
+                <li className="page-item">
+                  <span className="btn bluebg yellowtext border-3 fw-bold btn-sm d-flex button border fs-6 px-5" onClick={handleSubmit}>
+                    Submit
+                  </span>
+                </li>
+              </ul>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
-    </>
   );
 };
 
 export default AddWorkerFormThreeAdmin;
-

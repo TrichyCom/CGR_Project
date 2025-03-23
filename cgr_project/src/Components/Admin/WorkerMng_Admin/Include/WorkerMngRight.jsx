@@ -1,12 +1,13 @@
 import React,{useState,useEffect} from "react";
 import '../../../../../public/assets/css/owncss/SignupLogin.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
 function WorkerMngRight(){
 
     const [workers, setWorkers] = useState([]);
 
+    const navigate = useNavigate();
     useEffect(() => {
       axios
         .get("http://localhost:3001/workers") 
@@ -17,6 +18,17 @@ function WorkerMngRight(){
           console.error("Error fetching worker data:", error);
         });
     }, []);
+
+    const handleView = (finNo) => {
+        axios
+          .get(`http://localhost:3001/workers/${finNo}`)
+          .then((response) => {
+            navigate("/viewworkerdata", { state: { worker: response.data } });
+          })
+          .catch((error) => {
+            console.error("Error fetching worker details:", error);
+          });
+      };
     return(
         <>
         <div>
@@ -80,7 +92,13 @@ function WorkerMngRight(){
                       <td>{worker.FinNo}</td>
                       <td>{worker.SelectFeilds}</td>
                       <td>{worker.Gender}</td>
-                      <td><span className="btn btn-sm border p-0 px-3">All Details</span></td>
+                      <td> <span 
+                      className="btn btn-sm border p-0 px-3"
+                      onClick={() => handleView(worker.FinNo)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      View
+                    </span></td>
                     </tr>
                   ))
                 )}

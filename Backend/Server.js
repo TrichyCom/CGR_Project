@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const multer = require("multer");
 const path = require("path");
+
 const cors = require('cors');
 app.use(cors());
 
@@ -12,6 +13,29 @@ const PORT = 3001;
 
 const mysql = require('mysql');
 // const mysql = require('mysql2');
+// const fs = require("fs");
+
+app.use(express.json());
+const fs = require("fs");
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (certificate uploads)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+// File Upload Configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Store files in 'uploads' folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "_" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -30,21 +54,8 @@ db.connect((err) => {
 });
 
 module.exports = db;
-
-
 app.use(bodyParser.json());
 
-
-app.use("/uploads", express.static("uploads"));
-
-// Configure Multer for File Storage
-const storage = multer.diskStorage({
-  destination: "uploads/",
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage: storage });
 
 
 // API to Add Worker
@@ -165,30 +176,30 @@ app.get('/addworker', (req, res) => {
 
 
 
-app.post("/addcertificate", upload.any(), (req, res) => {
-  const { FinNo } = req.body;
-  let query = `INSERT INTO addcertificate (FinNo, BasicSafetyCourse, RopeAccessCourse, MetalScaffoldCourse, LiftingCourse, BasicSafetyCourseFile, RopeAccessCourseFile, MetalScaffoldCourseFile, LiftingCourseFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+// app.post("/addcertificate", upload.any(), (req, res) => {
+//   const { FinNo } = req.body;
+//   let query = `INSERT INTO addcertificate (FinNo, BasicSafetyCourse, RopeAccessCourse, MetalScaffoldCourse, LiftingCourse, BasicSafetyCourseFile, RopeAccessCourseFile, MetalScaffoldCourseFile, LiftingCourseFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  const data = [
-    FinNo,
-    req.body.BasicSafetyCourse || null,
-    req.body.RopeAccessCourse || null,
-    req.body.MetalScaffoldCourse || null,
-    req.body.LiftingCourse || null,
-    req.files.find((file) => file.fieldname === "BasicSafetyCourse_file")?.filename || null,
-    req.files.find((file) => file.fieldname === "RopeAccessCourse_file")?.filename || null,
-    req.files.find((file) => file.fieldname === "MetalScaffoldCourse_file")?.filename || null,
-    req.files.find((file) => file.fieldname === "LiftingCourse_file")?.filename || null,
-  ];
+//   const data = [
+//     FinNo,
+//     req.body.BasicSafetyCourse || null,
+//     req.body.RopeAccessCourse || null,
+//     req.body.MetalScaffoldCourse || null,
+//     req.body.LiftingCourse || null,
+//     req.files.find((file) => file.fieldname === "BasicSafetyCourse_file")?.filename || null,
+//     req.files.find((file) => file.fieldname === "RopeAccessCourse_file")?.filename || null,
+//     req.files.find((file) => file.fieldname === "MetalScaffoldCourse_file")?.filename || null,
+//     req.files.find((file) => file.fieldname === "LiftingCourse_file")?.filename || null,
+//   ];
 
-  db.query(query, data, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: "Database error" });
-    }
-    res.json({ message: "Certificates added successfully" });
-  });
-});
+//   db.query(query, data, (err, result) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "Database error" });
+//     }
+//     res.json({ message: "Certificates added successfully" });
+//   });
+// });
 
 
 
@@ -338,6 +349,154 @@ app.get("/workers", (req, res) => {
     res.json(results);
   });
 });
+
+
+
+
+// get particular worker details 
+
+app.get("/workers/:finNo", (req, res) => {
+  const finNo = req.params.finNo;
+  db.query("SELECT * FROM addworker WHERE FinNo = ?", [finNo], (err, result) => {
+    if (err) {
+      console.error("Error fetching worker details:", err);
+      res.status(500).json({ error: "Error fetching worker details" });
+    } else {
+      res.json(result[0]);
+    }
+  });
+});
+
+
+
+// get particular worker certificate
+
+// app.get("/certificates/:FinNo", (req, res) => {
+//   const { FinNo } = req.params;
+//   const sql = "SELECT * FROM addcertificate WHERE FinNo = ?";
+  
+//   db.query(sql, [FinNo], (err, result) => {
+//     if (err) return res.status(500).json({ error: err.message });
+//     if (result.length === 0) return res.status(404).json({ message: "No certificate found" });
+//     res.json(result[0]);
+//   });
+// });
+
+
+
+// const multer = require("multer");
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/"); // Ensure 'uploads' directory exists
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + "-" + file.originalname);
+//   },
+// });
+
+// const upload = multer({ storage });
+
+app.post("/certificates", upload.single("CertificateFile"), async (req, res) => {
+  try {
+    const {
+      FinNo,
+      CertificateName,
+      Category,
+      CertNo,
+      Expiry,
+      BalanceDays,
+      Levels,
+      Smse,
+      IssueDate,
+      WahaM,
+      Rigger,
+      SignalMan,
+      SsrcSssrc,
+      CourseTitle,
+      CourseTitleTwo,
+    } = req.body;
+
+    const CertificateFile = req.file ? req.file.filename : null;
+
+    const sql = `INSERT INTO certificate (FinNo, CertificateName, Category, CertNo, Expiry, BalanceDays, Levels, Smse, IssueDate, WahaM, Rigger, SignalMan, SsrcSssrc, CourseTitle, CourseTitleTwo, CertificateFile)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(sql, [FinNo, CertificateName, Category, CertNo, Expiry, BalanceDays, Levels, Smse, IssueDate, WahaM, Rigger, SignalMan, SsrcSssrc, CourseTitle, CourseTitleTwo, CertificateFile], (err, result) => {
+      if (err) {
+        console.error("Database Error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      res.status(201).json({ message: "Certificate added successfully", id: result.insertId });
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+
+
+
+
+
+// GET - Fetch Certificate Records
+app.get("/certificates", (req, res) => {
+  const sql = "SELECT * FROM certificate";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching certificates:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+// GET - Download Certificate File
+app.get("/certificates/download/:filename", (req, res) => {
+  const filePath = path.join(__dirname, "uploads", req.params.filename);
+  if (fs.existsSync(filePath)) {
+    res.download(filePath);
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
+});
+
+
+// Fetch Certificates by FinNo
+app.get("/certificates/:FinNo", (req, res) => {
+  const { FinNo } = req.params;
+  const sql = "SELECT * FROM certificate WHERE FinNo = ?";
+  
+  db.query(sql, [FinNo], (err, results) => {
+    if (err) {
+      console.error("Error fetching certificates:", err);
+      return res.status(500).json({ error: "Failed to fetch certificates" });
+    }
+    res.json(results);
+  });
+});
+
+
+// delete the particular row in certificate table
+
+app.delete("/certificates/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query("DELETE FROM certificate WHERE Id = ?", [id]);
+    res.status(200).json({ message: "Certificate deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting certificate" });
+  }
+});
+
+
+
+
+
+
+
 
 
 

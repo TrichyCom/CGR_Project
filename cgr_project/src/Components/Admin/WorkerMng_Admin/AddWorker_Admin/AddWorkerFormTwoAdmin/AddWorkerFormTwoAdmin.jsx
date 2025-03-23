@@ -8,6 +8,7 @@ const AddWorkerFormTwoAdmin = () => {
     DOA: "",  
     DOB: "",
     DOI: "",
+    DOE: "",
     DO_ThumbPrint: "",
     DO_Onboard: "",
     DO_Renewal: "",
@@ -136,7 +137,8 @@ const AddWorkerFormTwoAdmin = () => {
                       </div>
                       <div className="col-xl-6">
                       <div className="mb-3">
-                    
+                      <label className="form-label" htmlFor="exampleFormControlInput1">D.O.E</label>
+                      <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="D.O.E" onFocus={(e) => e.target.showPicker()} name="DOE" value={formData.DOE} onChange={handleChange}/>
                       </div>
                       </div>
                       {/* <div className="mb-3">
