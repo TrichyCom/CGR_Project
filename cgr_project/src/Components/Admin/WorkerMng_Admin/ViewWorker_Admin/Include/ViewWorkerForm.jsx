@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-
+import '../../../../../../public/assets/css/owncss/SignupLogin.css'
 const ViewWorkerForm = () => {
   const { state } = useLocation();
   const worker = state?.worker || {};
@@ -26,11 +26,29 @@ const ViewWorkerForm = () => {
     const ext = file.slice(file.lastIndexOf(".")).toLowerCase();
     return validExtensions.includes(ext);
   };
+
+
+
+
+  const [certificates, setCertificates] = useState([]);
+
+  useEffect(() => {
+    if (worker.FinNo) {
+      axios
+        .get(`http://localhost:3001/certificates?FinNo=${worker.FinNo}`)
+        .then((response) => {
+          setCertificates(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching certificate data:", error);
+        });
+    }
+  }, [worker.FinNo]);
   return (
     <div id="content" className="app-content">
-      <h1 className="page-header">VIEW WORKER</h1>
+      <h1 className="page-header bluetext fw-bold">VIEW DETAILS</h1>
       <div className="card">
-        <div className="card-header">WORKER DETAILS</div>
+        <div className="card-header yellowtext fs-6 fw-bold">WORKER DETAILS</div>
         <div className="card-body">
           <form>
             <div className="row">
@@ -79,41 +97,115 @@ const ViewWorkerForm = () => {
 
             <div className="row mt-3">
               <div className="col-md-12">
-              <label className="form-label">Certificate Files</label>
-                {certificate ? (
-                  <ul>
-                    {certificate.BasicSafetyCourseFile &&
-                      isValidFile(certificate.BasicSafetyCourseFile) && (
-                        <li>
-                          <p>Basic Safety Course</p>
-                          {certificate.BasicSafetyCourseFile.endsWith(".pdf") ? (
-                            <iframe
-                              src={`http://localhost:3001/uploads/${certificate.BasicSafetyCourseFile}`}
-                              width="300"
-                              height="400"
-                              title="Basic Safety Course"
-                            />
-                          ) : (
-                            <img
-                              src={`http://localhost:3001/uploads/${certificate.BasicSafetyCourseFile}`}
-                              alt="Basic Safety Course"
-                              width="150"
-                              height="150"
-                            />
-                          )}
-                          <br />
-                          <a
-                            href={`http://localhost:3001/uploads/${certificate.BasicSafetyCourseFile}`}
-                            download={certificate.BasicSafetyCourseFile}
-                          >
-                            Download Basic Safety Course
-                          </a>
-                        </li>
-                      )}
-                  </ul>
-                ) : (
-                  <p>No certificate data found.</p>
-                )}
+              <table className="table table-bordered">
+              <thead className="table-dark">
+              <label className="form-label"></label>
+              <tr>
+            <th colSpan="2">Certificate Files</th>
+          </tr>
+              </thead>
+              </table>
+              {certificates.length > 0 ? (
+  certificates.map((certificate, index) => (
+    <div key={index} className="table-responsive mt-3">
+      <table className="table table-bordered">
+        <thead className="bluebg">
+          <tr>
+            <th colSpan="2">Certificate {index + 1} - <span className="mx-3 yellowtext fw-bold">{certificate.CertificateName}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {certificate.CertificateName && (
+            <tr>
+              <th className="fw-bold">Certificate Name</th>
+              <td><span className="fw-bold yellowtext">{certificate.CertificateName}</span></td>
+            </tr>
+          )}
+          {certificate.Category && (
+            <tr>
+              <th>Category</th>
+              <td>{certificate.Category}</td>
+            </tr>
+          )}
+          {certificate.CertNo && (
+            <tr>
+              <th>Cert No</th>
+              <td>{certificate.CertNo}</td>
+            </tr>
+          )}
+          {certificate.CertNoTwo && (
+            <tr>
+              <th>Cert No Two</th>
+              <td>{certificate.CertNoTwo}</td>
+            </tr>
+          )}
+          {certificate.Expiry && (
+            <tr>
+              <th>Expiry</th>
+              <td>{certificate.Expiry}</td>
+            </tr>
+          )}
+          {certificate.BalanceDays && (
+            <tr>
+              <th>Balance Days</th>
+              <td>{certificate.BalanceDays}</td>
+            </tr>
+          )}
+          {certificate.Levels && (
+            <tr>
+              <th>Levels</th>
+              <td>{certificate.Levels}</td>
+            </tr>
+          )}
+          {certificate.Smse && (
+            <tr>
+              <th>SMSE</th>
+              <td>{certificate.Smse}</td>
+            </tr>
+          )}
+          {certificate.IssueDate && (
+            <tr>
+              <th>Issue Date</th>
+              <td>{certificate.IssueDate}</td>
+            </tr>
+          )}
+          {certificate.CourseTitle && (
+            <tr>
+              <th>Course Title</th>
+              <td>{certificate.CourseTitle}</td>
+            </tr>
+          )}
+          {certificate.CertificateFile && (
+            <tr>
+              <th>Certificate File</th>
+              <td>
+                <a
+                  href={`http://localhost:3001/uploads/${certificate.CertificateFile}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-success btn-sm me-2"
+                >
+                  View
+                </a>
+                <a
+                  href={`http://localhost:3001/download/${certificate.CertificateFile}`}
+                  className="btn btn-primary btn-sm"
+                >
+                  Download
+                </a>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  ))
+) : (
+  <p>No certificates found for this FinNo.</p>
+)}
+
+
+
               </div>
             </div>
           </form>

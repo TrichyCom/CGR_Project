@@ -142,6 +142,7 @@ const handleDeleteDepartment = async (id) => {
   return (
     <div>
       <div id="content" className="app-content">
+        
       {/* <h1 className="page-header mb-6" style={{  position: "fixed", top: 0, zIndex: 1000 }}>
   ADD OPTIONS
 </h1> */}

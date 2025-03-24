@@ -464,6 +464,7 @@ app.get("/certificates/download/:filename", (req, res) => {
 });
 
 
+
 // Fetch Certificates by FinNo
 app.get("/certificates/:FinNo", (req, res) => {
   const { FinNo } = req.params;
@@ -493,8 +494,34 @@ app.delete("/certificates/:id", async (req, res) => {
 
 
 
+// finno based worker view details for certificate
+
+app.get("/certificates", async (req, res) => {
+  const { FinNo } = req.query;
+  if (!FinNo) {
+    return res.status(400).json({ error: "FinNo is required" });
+  }
+
+  try {
+    const [rows] = await db.execute("SELECT * FROM certificate WHERE FinNo = ?", [FinNo]);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
 
+// finno based worker view details for certificate download
+
+app.get("/download/:filename", (req, res) => {
+  const filePath = path.join(__dirname, "uploads", req.params.filename);
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error("Download error:", err);
+      res.status(500).send("Error downloading file");
+    }
+  });
+});
 
 
 
