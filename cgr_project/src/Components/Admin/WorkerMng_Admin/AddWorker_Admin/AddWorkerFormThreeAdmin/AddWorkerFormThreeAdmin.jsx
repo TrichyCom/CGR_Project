@@ -186,11 +186,176 @@ const AddWorkerFormThreeAdmin = () => {
     }
   };
 
+
+
+
+
+
+
+
+  const [formDataeducation, setFormDataeducation] = useState({
+  
+    Education: "",
+  });
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Handle dropdown change
+  const handleInputChangeeducation = (e) => {
+    setFormDataeducation({ ...formDataeducation, Education: e.target.value });
+  };
+
+  // Handle file selection
+  const handleFileChangeeducation = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+
+  
+  
+
+  // const UploadEducation = async (e) => {
+  //   e.preventDefault();
+  
+  //   console.log("Current formDataeducation:", formDataeducation); // Debugging
+  
+  //   if (!formDataeducation.FinNo) {
+  //     alert("FinNo is missing. Please check the stored data.");
+  //     return;
+  //   }
+  
+  //   if (!formDataeducation.Education || !selectedFile) {
+  //     alert("Please enter FinNo, select an education level, and upload a file.");
+  //     return;
+  //   }
+  
+  //   const formDataToSend = new FormData();
+  //   formDataToSend.append("FinNo", formDataeducation.FinNo);
+  //   formDataToSend.append("Education", formDataeducation.Education);
+  //   formDataToSend.append("EducationFile", selectedFile);
+  
+  //   console.log("Uploading Education with FinNo:", formDataeducation.FinNo); // Debugging
+  
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:3001/upload-education",
+  //       formDataToSend,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
+  //     alert(response.data.message);
+  //     fetchDataeducation(); // Refresh data after upload
+  //   } catch (error) {
+  //     console.error("Error uploading education data:", error);
+  //     alert("Failed to upload education data.");
+  //   }
+  // };
+  
+  // Ensure FinNo is set correctly from localStorage
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
+    console.log("Loaded FinNo from localStorage:", storedData.FinNo); // Debugging
+  
+    setFormDataeducation((prevData) => ({
+      ...prevData,
+      FinNo: storedData.FinNo || "", // Ensure FinNo is assigned correctly
+    }));
+  }, []);
+  
+  
+  
+
+
+
+  const [education, setEducation] = useState([]);
+// const [formData, setFormData] = useState({ FinNo: "" });
+
+useEffect(() => {
+  // Ensure FinNo is loaded from localStorage first
+  const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
+  if (storedData.FinNo) {
+    setFormData((prevData) => ({ ...prevData, FinNo: storedData.FinNo }));
+  }
+}, []); // Runs only once when the component mounts
+
+useEffect(() => {
+  if (formData.FinNo) {
+    fetchEducationData(formData.FinNo); // Fetch data immediately
+
+    const interval = setInterval(() => {
+      fetchEducationData(formData.FinNo);
+    }, 5000); // Auto-refresh every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }
+}, [formData.FinNo]); // Runs when FinNo is updated
+
+const fetchEducationData = async (finNo) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/education/${finNo}`);
+    setEducation(response.data);
+  } catch (error) {
+    console.error("Error fetching education data:", error);
+  }
+};
+
+const UploadEducation = async (e) => {
+  e.preventDefault();
+
+  if (!formData.FinNo) {
+    alert("FinNo is missing. Please check the stored data.");
+    return;
+  }
+
+  if (!formDataeducation.Education || !selectedFile) {
+    alert("Please enter an education level and upload a file.");
+    return;
+  }
+
+  const formDataToSend = new FormData();
+  formDataToSend.append("FinNo", formData.FinNo);
+  formDataToSend.append("Education", formDataeducation.Education);
+  formDataToSend.append("EducationFile", selectedFile);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/upload-education",
+      formDataToSend,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    alert(response.data.message);
+    
+    fetchEducationData(formData.FinNo); // Refresh data immediately after upload
+    // Clear the select input and file input
+    setFormDataeducation((prev) => ({ ...prev, Education: "" })); 
+    document.getElementById("educationfileinput").value = ""; // Clear file input
+  } catch (error) {
+    console.error("Error uploading education data:", error);
+    alert("Failed to upload education data.");
+  }
+};
+
+
+  // Handle Delete Function
+  const handleDeleteEducation = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this record?")) return;
+
+    try {
+      await axios.delete(`http://localhost:3001/education/${id}`);
+      setEducation(education.filter((edu) => edu.Id !== id));
+      alert("Education record deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting record:", error);
+      alert("Failed to delete record.");
+    }
+  };
   return (
     <div id="content" className="app-content">
       <div className="container">
         <h1 className="page-header bluetext fw-bold">ADD WORKER</h1>
         <hr className="mb-4 opacity-3" />
+        <div className="row">
+        <div className="col-xl-6">
         <div className="card">
           <div className="card-header yellowtext fs-6 fw-bold">WORKER DETAILS</div>
           <div className="card-body pb-2">
@@ -244,129 +409,10 @@ const AddWorkerFormThreeAdmin = () => {
                   </div>
                 </div>
               </div>
-              {/* BasicSafetyCourse */}
-              {formData.CertificateName === "BasicSafetyCourse" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">Category</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Category"
-                          value={formData.Category}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">Expiry</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Expiry"
-                          value={formData.Expiry}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">BalanceDays</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="BalanceDays"
-                          value={formData.BalanceDays}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-                </>
-              )}
 
-              {/* RopeAccessCourse */}
-              {formData.CertificateName === "RopeAccessCourse" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">Levels</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Levels"
-                          value={formData.Levels}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">Expiry</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Expiry"
-                          value={formData.Expiry}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-                </>
-              )}
-              {/* MetalScaffoldCourse */}
 
-              {formData.CertificateName === "MetalScaffoldCourse" && (
-                <>
                   <div className="certificateinputheight">
                   <div className="row">
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">SMSE</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Smse"
-                          value={formData.Smse}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
                     <div className="col-xl-4">
                       <div className="mb-3">
                         <label className="form-label">CertNo</label>
@@ -391,247 +437,6 @@ const AddWorkerFormThreeAdmin = () => {
                         />
                       </div>
                     </div>
-                  </div>
-                  </div>
-                </>
-              )}
-
-              {/* WorkingAtHeightCourse */}
-
-              {formData.CertificateName === "WorkingAtHeightCourse" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">WAHA/M</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="WahaM"
-                          value={formData.WahaM}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                  </div>
-                  </div>
-                </>
-              )}
-
-              {/* LiftingCourse */}
-
-              {formData.CertificateName === "LiftingCourse" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">Rigger</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Rigger"
-                          value={formData.Rigger}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">SignalMan</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="SignalMan"
-                          value={formData.SignalMan}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">IssueDate</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="IssueDate"
-                          value={formData.IssueDate}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-                </>
-              )}
-
-              {/* Gondola */}
-
-              {formData.CertificateName === "Gondola" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">SSRC/SSSRC</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="SsrcSssrc"
-                          value={formData.SsrcSssrc}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                  </div>
-                  </div>
-                </>
-              )}
-              {/* ScissorsLift3a(MEWP) */}
-
-
-              {formData.CertificateName === "ScissorsLift3a(MEWP)" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">Expiry</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Expiry"
-                          value={formData.Expiry}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                  </div>
-                  </div>
-                </>
-              )}
-
-              {/* BoomLift3b(MEWP) */}
-
-              {formData.CertificateName === "BoomLift3b(MEWP)" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">Expiry</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="Expiry"
-                          value={formData.Expiry}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                  </div>
-                  </div>
-                </>
-              )}
-
-
-              {/* AdditionalCourse */}
-
-              {formData.CertificateName === "AdditionalCourse" && (
-                <>
-                  <div className="certificateinputheight">
-                  <div className="row">
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">CourseTitle</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CourseTitle"
-                          value={formData.CourseTitle}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNo"
-                          value={formData.CertNo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
                     <div className="col-xl-4">
                       <div className="mb-3">
                         <label className="form-label">Expiry</label>
@@ -645,48 +450,10 @@ const AddWorkerFormThreeAdmin = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="row">
+                  </div>
+     
 
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">CourseTitle 2</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CourseTitleTwo"
-                          value={formData.CourseTitleTwo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">CertNo 2</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="CertNoTwo"
-                          value={formData.CertNoTwo}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4">
-                      <div className="mb-3">
-                        <label className="form-label">IssueDate</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="IssueDate"
-                          value={formData.IssueDate}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-                </>
-              )}
+             
 
               <div className="mx-auto text-center">
                 <button type="submit" className="btn btn-primary w-25 fw-bold rounded" onClick={handleUpload}>
@@ -750,6 +517,109 @@ const AddWorkerFormThreeAdmin = () => {
 
           </div>
         </div>
+        </div>
+   
+        <div className="col-xl-6">
+        <div className="card">
+          <div className="card-header yellowtext fs-6 fw-bold">WORKER DETAILS</div>
+          <div className="card-body pb-2">
+            <form>
+
+              <div className="row">
+                <div className="col-xl-6">
+                  <div className="mb-3">
+                  <label className="form-label">Highest Qualification</label>
+            <select className="form-select" value={formDataeducation.Education} onChange={handleInputChangeeducation} required>
+              <option value="">Select Education</option>
+              <option value="10th">10th</option>
+              <option value="12th">12th</option>
+              <option value="UG">UG</option>
+              <option value="PG">PG</option>
+            </select>
+                  </div>
+                </div>
+                <div className="col-xl-6">
+                  <div className="mb-3">
+                  <label className="form-label">Upload Education File</label>
+                  <input type="file" id="educationfileinput" className="form-control" onChange={handleFileChangeeducation} accept="*/*" required />
+                  </div>
+                </div>
+              </div>
+
+
+
+     
+
+             
+
+              <div className="mx-auto text-center">
+                <button type="submit" className="btn btn-primary w-25 fw-bold rounded" onClick={UploadEducation}>
+                  Upload
+                </button>
+              </div>
+
+            </form>
+<div className="border border-3 mt-3"></div>
+<div className="mt-4">
+      <h3>Uploaded Education Files</h3>
+      {education.length > 0 ? (
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>FinNo</th>
+              <th>Certificate Name</th>
+              <th>File</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {education.map((edu) => (
+              <tr key={edu.Id}>
+                <td>{edu.FinNo}</td>
+                <td>{edu.Education}</td>
+                <td>
+                  {edu.EducationFile && (
+                    <a
+                      href={`http://localhost:3001/uploads/${edu.EducationFile}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View File
+                    </a>
+                  )}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteEducation(edu.Id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No certificates found for this FinNo.</p>
+      )}
+    </div>
+
+            <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
+              <ul className="pagination pagination-sm mb-0 mx-auto justify-content-center">
+                <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
+                <li className="page-item">
+                  <span className="btn bluebg yellowtext border-3 fw-bold btn-sm d-flex button border fs-6 px-5" onClick={handleSubmit}>
+                    Submit
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      </div>
       </div>
     </div>
   );

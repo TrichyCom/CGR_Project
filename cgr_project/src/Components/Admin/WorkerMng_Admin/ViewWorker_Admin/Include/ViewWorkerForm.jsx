@@ -6,26 +6,26 @@ const ViewWorkerForm = () => {
   const { state } = useLocation();
   const worker = state?.worker || {};
 
-  const [certificate, setCertificate] = useState(null);
+  // const [certificate, setCertificate] = useState(null);
 
-  useEffect(() => {
-    if (worker?.FinNo) {
-      axios
-        .get(`http://localhost:3001/certificates/${worker.FinNo}`)
-        .then((res) => {
-          setCertificate(res.data);
-        })
-        .catch((err) => console.error("Error fetching certificate:", err));
-    }
-  }, [worker?.FinNo]);
+  // useEffect(() => {
+  //   if (worker?.FinNo) {
+  //     axios
+  //       .get(`http://localhost:3001/certificates/${worker.FinNo}`)
+  //       .then((res) => {
+  //         setCertificate(res.data);
+  //       })
+  //       .catch((err) => console.error("Error fetching certificate:", err));
+  //   }
+  // }, [worker?.FinNo]);
 
-  // Function to validate file types
-  const isValidFile = (file) => {
-    if (!file) return false;
-    const validExtensions = [".pdf", ".jpg", ".jpeg", ".png", ".gif"];
-    const ext = file.slice(file.lastIndexOf(".")).toLowerCase();
-    return validExtensions.includes(ext);
-  };
+  // // Function to validate file types
+  // const isValidFile = (file) => {
+  //   if (!file) return false;
+  //   const validExtensions = [".pdf", ".jpg", ".jpeg", ".png", ".gif"];
+  //   const ext = file.slice(file.lastIndexOf(".")).toLowerCase();
+  //   return validExtensions.includes(ext);
+  // };
 
 
 
@@ -35,7 +35,7 @@ const ViewWorkerForm = () => {
   useEffect(() => {
     if (worker.FinNo) {
       axios
-        .get(`http://localhost:3001/certificates?FinNo=${worker.FinNo}`)
+        .get(`http://localhost:3001/certificates/${worker.FinNo}`) // Fetch specific FinNo
         .then((response) => {
           setCertificates(response.data);
         })
@@ -44,6 +44,22 @@ const ViewWorkerForm = () => {
         });
     }
   }, [worker.FinNo]);
+  
+
+
+//   useEffect(() => {
+//   if (worker.FinNo) {
+//     axios
+//       .get(`http://localhost:3001/certificates/${worker.FinNo}`)  // Use FinNo as URL param
+//       .then((response) => {
+//         setCertificates(response.data);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching certificate data:", error);
+//       });
+//   }
+// }, [worker.FinNo]);
+
   return (
     <div id="content" className="app-content">
       <h1 className="page-header bluetext fw-bold">VIEW DETAILS</h1>

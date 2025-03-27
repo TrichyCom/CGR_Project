@@ -24,17 +24,56 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // File Upload Configuration
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/"); // Store files in 'uploads' folder
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + "_" + file.originalname);
+//   },
+// });
+
+// const upload = multer({ storage });
+
+
+
+
+
+
+
+
+
+
+
+// Configure Multer Storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Store files in 'uploads' folder
+    cb(null, "uploads/"); // Save files in the 'uploads' directory
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "_" + file.originalname);
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
   },
 });
 
-const upload = multer({ storage });
+// File Filter to Accept Specific Formats
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = /jpeg|jpg|png|pdf|xlsx|xls|csv/; // Allowed formats
+  const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedFileTypes.test(file.mimetype);
 
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    return cb(new Error("Invalid file type. Only images, PDFs, and Excel files are allowed."), false);
+  }
+};
+
+// Multer Upload Configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: fileFilter,
+});
 
 
 const db = mysql.createConnection({
@@ -466,18 +505,18 @@ app.get("/certificates/download/:filename", (req, res) => {
 
 
 // Fetch Certificates by FinNo
-app.get("/certificates/:FinNo", (req, res) => {
-  const { FinNo } = req.params;
-  const sql = "SELECT * FROM certificate WHERE FinNo = ?";
+// app.get("/certificates/:FinNo", (req, res) => {
+//   const { FinNo } = req.params;
+//   const sql = "SELECT * FROM certificate WHERE FinNo = ?";
   
-  db.query(sql, [FinNo], (err, results) => {
-    if (err) {
-      console.error("Error fetching certificates:", err);
-      return res.status(500).json({ error: "Failed to fetch certificates" });
-    }
-    res.json(results);
-  });
-});
+//   db.query(sql, [FinNo], (err, results) => {
+//     if (err) {
+//       console.error("Error fetching certificates:", err);
+//       return res.status(500).json({ error: "Failed to fetch certificates" });
+//     }
+//     res.json(results);
+//   });
+// });
 
 
 // delete the particular row in certificate table
@@ -495,20 +534,18 @@ app.delete("/certificates/:id", async (req, res) => {
 
 
 // finno based worker view details for certificate
-
-app.get("/certificates", async (req, res) => {
-  const { FinNo } = req.query;
-  if (!FinNo) {
-    return res.status(400).json({ error: "FinNo is required" });
-  }
-
-  try {
-    const [rows] = await db.execute("SELECT * FROM certificate WHERE FinNo = ?", [FinNo]);
-    res.json(rows);
-  } catch (error) {
-    res.status(500).json({ error: "Database error" });
-  }
+app.get("/certificates/:FinNo", (req, res) => {
+  const FinNo = req.params.FinNo;
+  const sql = "SELECT * FROM certificate WHERE FinNo = ?";
+  
+  db.query(sql, [FinNo], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.json(result);
+  });
 });
+
 
 
 // finno based worker view details for certificate download
@@ -523,6 +560,61 @@ app.get("/download/:filename", (req, res) => {
   });
 });
 
+
+
+
+// education post
+
+app.post("/upload-education", upload.single("EducationFile"), (req, res) => {
+  const { FinNo, Education } = req.body;
+  const filePath = req.file ? req.file.filename : null;
+
+  // console.log("Received FinNo:", FinNo, "Education:", Education, "File:", filePath); // Debugging
+
+  if (!FinNo || !Education || !filePath) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const sql = "INSERT INTO education (FinNo, Education, EducationFile) VALUES (?, ?, ?)";
+  db.query(sql, [FinNo, Education, filePath], (err, result) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: "Database insertion failed" });
+    }
+    res.status(200).json({ message: "Education details uploaded successfully!" });
+  });
+});
+
+
+
+
+
+
+// education particular value get finno based
+app.get("/education/:FinNo", (req, res) => {
+  const { FinNo } = req.params;
+  const sql = "SELECT * FROM education WHERE FinNo = ?";
+  
+  db.query(sql, [FinNo], (err, result) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: "Failed to fetch education data" });
+    }
+    res.status(200).json(result);
+  });
+});
+
+
+// education particular value drop finno based
+app.delete("/education/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM education WHERE Id = ?";
+  
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json({ message: "Education record deleted successfully!" });
+  });
+});
 
 
 
