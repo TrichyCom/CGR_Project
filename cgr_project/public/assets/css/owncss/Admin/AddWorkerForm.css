@@ -117,6 +117,92 @@
 .cericon{
   font-size: 90px;
 }
-.certificateinputheight{
-  height: 100px;
+
+
+#certificateTableWrapper {
+  max-height: 210px; /* Set the maximum height to 80px */
+  height: 210px;
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds 80px */
+  /* display: block;  */
+}
+
+
+#certificateTableWrapper table {
+  /* width: 100%; */
+  border-collapse: collapse; /* Optional: makes borders collapse */
+}
+
+#certificateTableWrapper thead {
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick it to the top */
+  /* background-color: rgb(115, 33, 33); Background color for the header */
+  z-index: 1; /* Keeps the header above the table body */
+  box-shadow: 0 12px 15px rgba(0, 0, 0, 0.1); /* Optional: adds shadow to make it more visible */
+  backdrop-filter: blur(115px); /* Applies blur to the background */
+  -webkit-backdrop-filter: blur(15px); /* For Safari */
+}
+
+
+#certificateTableWrapper tbody {
+  /* display: block;  */
+  height: 80px; /* Forces the scrollable height to be 80px */
+  overflow-y: auto;
+}
+
+
+/* Custom scrollbar styles */
+#certificateTableWrapper::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+#certificateTableWrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Light background for the track */
+  border-radius: 10px;
+}
+
+#certificateTableWrapper::-webkit-scrollbar-thumb {
+  background-color: #888; /* Thumb color */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+#certificateTableWrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Darker thumb on hover */
+}
+
+
+
+/* educationtable */
+#educationtable{
+  height: 313px;
+  overflow-y: auto;
+  max-height: 313px;
+}
+
+#educationtable thead {
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick it to the top */
+  /* background-color: rgb(115, 33, 33); Background color for the header */
+  z-index: 1; /* Keeps the header above the table body */
+  box-shadow: 0 12px 15px rgba(0, 0, 0, 0.1); /* Optional: adds shadow to make it more visible */
+  backdrop-filter: blur(115px); /* Applies blur to the background */
+  -webkit-backdrop-filter: blur(15px); /* For Safari */
+}
+
+/* Custom scrollbar styles */
+#educationtable::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+#educationtable::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Light background for the track */
+  border-radius: 10px;
+}
+
+#educationtable::-webkit-scrollbar-thumb {
+  background-color: #888; /* Thumb color */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+#educationtable::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Darker thumb on hover */
 }

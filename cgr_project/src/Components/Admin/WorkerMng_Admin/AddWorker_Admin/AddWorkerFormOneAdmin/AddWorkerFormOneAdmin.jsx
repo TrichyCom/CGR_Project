@@ -289,7 +289,19 @@ const AddWorkerFormOneAdmin = () => {
                     <div className="col-xl-6">
                       <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlInput1">Company</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Company" name="CompanyName" onChange={handleChange} value={formData.CompanyName}/>
+                        {/* <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Company" name="CompanyName" onChange={handleChange} value={formData.CompanyName}/> */}
+                        <select
+  className="form-select"
+  name="CompanyName"
+  onChange={handleChange}
+  value={formData.CompanyName}
+  id="exampleFormControlInput1"
+>
+  <option value="" className="text-dark">Select Company</option>
+  <option value="Company1" className="text-dark">Company 1</option>
+  <option value="Company2" className="text-dark">Company 2</option>
+</select>
+
                       </div>
                       </div>
                     <div className="col-xl-6">

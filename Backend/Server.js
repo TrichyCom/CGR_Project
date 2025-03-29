@@ -619,6 +619,45 @@ app.delete("/education/:id", (req, res) => {
 
 
 
+
+
+
+// addworkerreportfiles
+
+app.post('/workerreportfiles', upload.fields([
+  { name: 'IPA' }, { name: 'Passport' }, { name: 'Bond' },
+  { name: 'Onboard' }, { name: 'Medical' }, { name: 'Issuance' },
+  { name: 'MOMThumbPrint' }, { name: 'IC' }, { name: 'Contract' }
+]), (req, res) => {
+  const { FinNo } = req.body;
+  const filePaths = req.files;
+
+  const fileData = {
+      FinNo,
+      IPA: filePaths.IPA ? filePaths.IPA[0].filename : null,
+      Passport: filePaths.Passport ? filePaths.Passport[0].filename : null,
+      Bond: filePaths.Bond ? filePaths.Bond[0].filename : null,
+      Onboard: filePaths.Onboard ? filePaths.Onboard[0].filename : null,
+      Medical: filePaths.Medical ? filePaths.Medical[0].filename : null,
+      Issuance: filePaths.Issuance ? filePaths.Issuance[0].filename : null,
+      MOMThumbPrint: filePaths.MOMThumbPrint ? filePaths.MOMThumbPrint[0].filename : null,
+      IC: filePaths.IC ? filePaths.IC[0].filename : null,
+      Contract: filePaths.Contract ? filePaths.Contract[0].filename : null
+  };
+
+  db.query('INSERT INTO workerreportfiles SET ?', fileData, (err, result) => {
+      if (err) {
+          console.error('Error inserting data:', err);
+          res.status(500).send('Database error');
+      } else {
+          res.status(200).send('Worker Report Files Uploaded Successfully');
+      }
+  });
+});
+
+
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaExclamationCircle } from 'react-icons/fa';
+import { FaGraduationCap } from 'react-icons/fa'; // Graduation cap from FontAwesome
 
 const AddWorkerFormThreeAdmin = () => {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const AddWorkerFormThreeAdmin = () => {
     Category: "",
     CertNo: "",
     Expiry: "",
-    BalanceDays: "",
+    BalanceDays: "0",
     Levels: "",
     Smse: "",
     IssueDate: "",
@@ -24,7 +26,10 @@ const AddWorkerFormThreeAdmin = () => {
 
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificateData, setCertificateData] = useState([]);
-
+  const handleFocus = (e) => {
+    // Optional: You can execute additional logic when the input is focused
+    console.log('Date Picker Focused');
+  };
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("workerData")) || {};
     setFormData((prevData) => ({ ...prevData, ...storedData }));
@@ -50,11 +55,55 @@ const AddWorkerFormThreeAdmin = () => {
     return () => clearInterval(interval);
   }, [formData.FinNo]);
 
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  
+    setFormData((prevData) => {
+      const newData = { ...prevData, [name]: value };
+  
+      // If both IssueDate and Expiry are set, calculate BalanceDays
+      if (newData.IssueDate && newData.Expiry) {
+        const issueDate = new Date(newData.IssueDate);
+        const expiryDate = new Date(newData.Expiry);
+  
+        // Ensure both dates are valid
+        if (!isNaN(issueDate) && !isNaN(expiryDate)) {
+          // Calculate the difference in time (in milliseconds)
+          const timeDifference = expiryDate - issueDate;
+          
+          // Convert time difference to days
+          const daysDifference = timeDifference / (1000 * 3600 * 24);
+  
+          // Set the BalanceDays value (ensure it's a positive value)
+          newData.BalanceDays = daysDifference >= 0 ? daysDifference : 0; // Prevent negative days
+          
+        } else {
+          newData.BalanceDays = '0'; // Reset BalanceDays if dates are invalid
+          
+        }
+      }
 
+          // If either date is missing, keep BalanceDays as "0"
+    if (!newData.IssueDate || !newData.Expiry) {
+      newData.BalanceDays = '0';
+    }
+  
+      return newData;
+    });
+  };
+  
+
+
+
+
+
+  
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
       setCertificateFile(e.target.files[0]);
@@ -113,7 +162,7 @@ const AddWorkerFormThreeAdmin = () => {
         Cert_No: "",
         DOI: "",
         DOE: "",
-        BalanceDays: "",
+        BalanceDays: "0",
         SMSE: "",
         WAHA_M: "",
         Rigger: "",
@@ -165,7 +214,7 @@ const AddWorkerFormThreeAdmin = () => {
         CertNo: "",
         CertNoTwo: "",
         Expiry: "",
-        BalanceDays: "",
+        BalanceDays: "0",
         Levels: "",
         Smse: "",
         IssueDate: "",
@@ -411,9 +460,9 @@ const UploadEducation = async (e) => {
               </div>
 
 
-                  <div className="certificateinputheight">
+                  <div className="">
                   <div className="row">
-                    <div className="col-xl-4">
+                    <div className="col-xl-3">
                       <div className="mb-3">
                         <label className="form-label">CertNo</label>
                         <input
@@ -425,27 +474,42 @@ const UploadEducation = async (e) => {
                         />
                       </div>
                     </div>
-                    <div className="col-xl-4">
+                    <div className="col-xl-3">
                       <div className="mb-3">
                         <label className="form-label">IssueDate</label>
                         <input
-                          type="text"
+                          type="date"
                           className="form-control"
                           name="IssueDate"
                           value={formData.IssueDate}
                           onChange={handleInputChange}
+                          onFocus={(e) => e.target.showPicker()}
                         />
                       </div>
                     </div>
-                    <div className="col-xl-4">
+                    <div className="col-xl-3">
                       <div className="mb-3">
                         <label className="form-label">Expiry</label>
                         <input
-                          type="text"
+                          type="date"
                           className="form-control"
                           name="Expiry"
                           value={formData.Expiry}
                           onChange={handleInputChange}
+                          onFocus={(e) => e.target.showPicker()}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-xl-3">
+                      <div className="mb-3">
+                        <label className="form-label">Balance Days</label>
+                        <input
+                          type="text"
+                          className="form-control text-warning"
+                          name="BalanceDays"
+                          value={formData.BalanceDays || '0'}
+                          onChange={handleInputChange}
+                          readOnly
                         />
                       </div>
                     </div>
@@ -455,7 +519,7 @@ const UploadEducation = async (e) => {
 
              
 
-              <div className="mx-auto text-center">
+              <div className="mx-auto text-center mt-3">
                 <button type="submit" className="btn btn-primary w-25 fw-bold rounded" onClick={handleUpload}>
                   Upload
                 </button>
@@ -466,16 +530,17 @@ const UploadEducation = async (e) => {
             <div className="mt-4">
               <h3>Uploaded Certificates</h3>
               {certificateData.length > 0 ? (
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
+                <div id="certificateTableWrapper">
+                <table className="table table-bordered " >
+                  <thead className="">
+                    <tr className="bg-dark">
                       <th>FinNo</th>
                       <th>Certificate Name</th>
                       <th>File</th>
                       <th>Delete</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody >
                     {certificateData.map((cert) => (
                       <tr key={cert.Id}>
                         <td>{cert.FinNo}</td>
@@ -499,12 +564,18 @@ const UploadEducation = async (e) => {
                     ))}
                   </tbody>
                 </table>
+                </div>
               ) : (
-                <p>No certificates found for this FinNo.</p>
+              
+                <p className="py-1 mx-auto text-center" style={{height:'195px'}}>
+          <FaExclamationCircle  className="w-50 h-50 p-3"/>
+          <p> No certificates found for this FinNo.</p>
+         
+        </p>
               )}
             </div>
 
-            <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
+            {/* <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
               <ul className="pagination pagination-sm mb-0 mx-auto justify-content-center">
                 <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
                 <li className="page-item">
@@ -513,7 +584,7 @@ const UploadEducation = async (e) => {
                   </span>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
           </div>
         </div>
@@ -541,31 +612,26 @@ const UploadEducation = async (e) => {
                 <div className="col-xl-6">
                   <div className="mb-3">
                   <label className="form-label">Upload Education File</label>
+                  <div className="input-group">
                   <input type="file" id="educationfileinput" className="form-control" onChange={handleFileChangeeducation} accept="*/*" required />
+                  <button type="submit" className="btn btn-primary w-25 fw-bold" onClick={UploadEducation}>
+                  Upload
+                </button>
+                  </div>
                   </div>
                 </div>
               </div>
 
-
-
-     
-
-             
-
-              <div className="mx-auto text-center">
-                <button type="submit" className="btn btn-primary w-25 fw-bold rounded" onClick={UploadEducation}>
-                  Upload
-                </button>
-              </div>
 
             </form>
 <div className="border border-3 mt-3"></div>
 <div className="mt-4">
       <h3>Uploaded Education Files</h3>
       {education.length > 0 ? (
+        <div id="educationtable">
         <table className="table table-bordered">
           <thead>
-            <tr>
+            <tr className="bg-dark">
               <th>FinNo</th>
               <th>Certificate Name</th>
               <th>File</th>
@@ -600,12 +666,23 @@ const UploadEducation = async (e) => {
             ))}
           </tbody>
         </table>
+        </div>
       ) : (
-        <p>No certificates found for this FinNo.</p>
+        <div className="text-center" style={{height:'310px'}}>
+          <FaGraduationCap className="h-25 w-25 mt-5"/>
+        <p className="py-3">No certificates found for this FinNo.</p>
+        </div>
       )}
     </div>
 
-            <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
+
+
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div className="d-lg-flex align-items-center mb-n2 py-4 my-3">
               <ul className="pagination pagination-sm mb-0 mx-auto justify-content-center">
                 <li class="page-item "><span class="page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-4" onClick={handlePre}>Previous</span></li>
                 <li className="page-item">
@@ -616,10 +693,7 @@ const UploadEducation = async (e) => {
               </ul>
             </div>
 
-          </div>
-        </div>
-      </div>
-      </div>
+
       </div>
     </div>
   );
