@@ -298,8 +298,8 @@ const AddWorkerFormOneAdmin = () => {
   id="exampleFormControlInput1"
 >
   <option value="" className="text-dark">Select Company</option>
-  <option value="Company1" className="text-dark">Company 1</option>
-  <option value="Company2" className="text-dark">Company 2</option>
+  <option value="Company1" className="text-dark">PNI</option>
+  <option value="Company2" className="text-dark">CGR</option>
 </select>
 
                       </div>
@@ -463,7 +463,7 @@ const AddWorkerFormOneAdmin = () => {
                       </div>
                       <div className="col-xl-6">
                       <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlSelect1">Select Role</label>
+                        {/* <label className="form-label" htmlFor="exampleFormControlSelect1">Select Role</label>
                         <select className="form-select" id="exampleFormControlSelect1" name="SelectRole" onChange={handleChange} value={formData.SelectRole}>
                         <option value="">Select a role</option>
         {roless.map((role) => (
@@ -471,7 +471,7 @@ const AddWorkerFormOneAdmin = () => {
             {role.Roles}
           </option>
         ))}
-                        </select>
+                        </select> */}
                       </div>
                       </div>
                   

@@ -67,32 +67,32 @@ const AddWorkerFormThreeAdmin = () => {
     setFormData((prevData) => {
       const newData = { ...prevData, [name]: value };
   
-      // If both IssueDate and Expiry are set, calculate BalanceDays
-      if (newData.IssueDate && newData.Expiry) {
-        const issueDate = new Date(newData.IssueDate);
-        const expiryDate = new Date(newData.Expiry);
-  
-        // Ensure both dates are valid
-        if (!isNaN(issueDate) && !isNaN(expiryDate)) {
-          // Calculate the difference in time (in milliseconds)
-          const timeDifference = expiryDate - issueDate;
-          
-          // Convert time difference to days
-          const daysDifference = timeDifference / (1000 * 3600 * 24);
-  
-          // Set the BalanceDays value (ensure it's a positive value)
-          newData.BalanceDays = daysDifference >= 0 ? daysDifference : 0; // Prevent negative days
-          
-        } else {
-          newData.BalanceDays = '0'; // Reset BalanceDays if dates are invalid
-          
-        }
-      }
+// If both Expiry and current date are set, calculate BalanceDays
+if (newData.Expiry) {
+  const currentDate = new Date(); // Get today's date
+  const expiryDate = new Date(newData.Expiry);
+
+  // Ensure expiry date is valid
+  if (!isNaN(expiryDate)) {
+    // Calculate the difference in time (in milliseconds)
+    const timeDifference = expiryDate - currentDate;
+
+    // Convert time difference to days
+    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    // Set the BalanceDays value (ensure it's a positive value)
+    newData.BalanceDays = daysDifference >= 0 ? daysDifference : 0; // Prevent negative days
+
+  } else {
+    newData.BalanceDays = '0'; // Reset BalanceDays if Expiry is invalid
+  }
+}
+
 
           // If either date is missing, keep BalanceDays as "0"
-    if (!newData.IssueDate || !newData.Expiry) {
-      newData.BalanceDays = '0';
-    }
+    // if (!newData.IssueDate || !newData.Expiry) {
+    //   newData.BalanceDays = '0';
+    // }
   
       return newData;
     });
@@ -155,6 +155,13 @@ const AddWorkerFormThreeAdmin = () => {
       alert("Worker added successfully!");
       localStorage.removeItem("workerData");
 
+      localStorage.removeItem("selectedInputNames");
+
+   
+      // setFormData({}); // Clear form data
+      // setSelectedInputNames([]); // Clear selected names
+
+      navigate("/workermngadmin");
       setFormData({
         SelectCourse: "",
         Category: "",
@@ -192,6 +199,10 @@ const AddWorkerFormThreeAdmin = () => {
 
     if (certificateFile) {
       formDataToSend.append("CertificateFile", certificateFile);
+    }
+    if (!formData.FinNo) {
+      alert("FinNo is missing. Please check the stored data.");
+      return;
     }
 
     try {
@@ -398,6 +409,21 @@ const UploadEducation = async (e) => {
       alert("Failed to delete record.");
     }
   };
+
+  const [certificates, setCertificates] = useState([]);
+
+useEffect(() => {
+  fetchCertificates();
+}, []);
+
+const fetchCertificates = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/getcertificates");
+    setCertificates(response.data); // Store fetched data in state
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+  }
+};
   return (
     <div id="content" className="app-content">
       <div className="container">
@@ -433,16 +459,14 @@ const UploadEducation = async (e) => {
                       required
                     >
                       <option value="">Select Certificate</option>
-                      <option value="BasicSafetyCourse">Basic Safety Course</option>
-                      <option value="RopeAccessCourse">Rope Access Course</option>
-                      <option value="MetalScaffoldCourse">MetalScaffoldCourse</option>
-                      <option value="WorkingAtHeightCourse">WorkingAtHeightCourse</option>
-                      <option value="LiftingCourse">LiftingCourse</option>
-                      <option value="Gondola">Gondola</option>
-                      <option value="ScissorsLift3a(MEWP)">ScissorsLift3a(MEWP)</option>
-                      <option value="BoomLift3b(MEWP)">BoomLift3b(MEWP)</option>
-                      <option value="AdditionalCourse">AdditionalCourse</option>
+  
+  {certificates.map((cert) => (
+    <option key={cert.id} value={cert.CertificateList}>
+      {cert.CertificateList}
+    </option>
+  ))}
                     </select>
+
                   </div>
                 </div>
                 <div className="col-xl-6">
@@ -614,7 +638,7 @@ const UploadEducation = async (e) => {
                   <label className="form-label">Upload Education File</label>
                   <div className="input-group">
                   <input type="file" id="educationfileinput" className="form-control" onChange={handleFileChangeeducation} accept="*/*" required />
-                  <button type="submit" className="btn btn-primary w-25 fw-bold" onClick={UploadEducation}>
+                  <button type="submit" className="btn btn-primary" onClick={UploadEducation}>
                   Upload
                 </button>
                   </div>

@@ -96,7 +96,7 @@ const ViewWorkerForm = () => {
               </div>
               <div className="col-md-6">
                 <label className="form-label">Contact Number</label>
-                <input type="text" className="form-control" value={worker.ContNum || ""} readOnly />
+                <input type="text" className="form-control" value={worker.ContNum|| ""} readOnly />
               </div>
             </div>
 

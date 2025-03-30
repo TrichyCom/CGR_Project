@@ -15,6 +15,7 @@ import WorkerTaskMng from './Components/Worker/WorkerTaskMng/WorkerTaskMng';
 import WorkerAttananceMng from './Components/Worker/WorkerAttananceMng/WorkerAttananceMng';
 import FormDynamic from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/FormDynamic/FormDynamic';
 import ViewWorker_Admin from './Components/Admin/WorkerMng_Admin/ViewWorker_Admin/ViewWorker_Admin';
+import ExcelAddWorker_Admin from './Components/Admin/WorkerMng_Admin/ExcelAddWorker_Admin/ExcelAddWorker_Admin';
 function App() {
 
   return (
@@ -32,6 +33,9 @@ function App() {
           <Route path='/addworkerformadmin' element={<AddWorkerAdmin />} ></Route>
           <Route path='/addworkerformtwomain' element={<AddWorkerFormTwoMain />} ></Route>
           <Route path='/addworkerformthreemain' element={<AddWorkerFormThreeMain />} ></Route>
+
+          {/* excel addworker admin*/}
+          <Route path='/exceladdworker' element={<ExcelAddWorker_Admin />} ></Route>
 
            {/* AddOptions Addworkeradmin */}
           <Route path='/formdynamic' element={<FormDynamic />} ></Route>

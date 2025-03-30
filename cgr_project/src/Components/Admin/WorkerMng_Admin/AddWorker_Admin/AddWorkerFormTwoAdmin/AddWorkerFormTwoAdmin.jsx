@@ -57,7 +57,7 @@ const AddWorkerFormTwoAdmin = () => {
       const inputName = e.target.name;
       setSelectedInputNames((prevNames) => {
         const updatedNames = [...prevNames, inputName];
-        localStorage.setItem("selectedInputNames", JSON.stringify(updatedNames)); // Store in localStorage
+        localStorage.setItem("selectedInputNames", JSON.stringify(updatedNames)); 
         return updatedNames;
       });
     }
@@ -116,8 +116,10 @@ Object.keys(files).forEach((key) => {
   
           // Store in localStorage
           localStorage.setItem("workerData", JSON.stringify(response.data));
+          
                 // Reset input fields
       setSelectedFile(null);
+      
    
     
     if (fileInputRef.current) {
@@ -360,9 +362,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">IPA File</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="IPA" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -371,9 +373,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">Passport File</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="Passport" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -384,9 +386,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">Bond File</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="Bond" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -395,9 +397,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">Onboard File</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="Onboard" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -408,9 +410,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">Medical Report</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="Medical" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -419,9 +421,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">Issuance File</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="Issuance" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -432,9 +434,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">MOM Thumb Print Form</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="MOMThumbPrint" onChange={handleFileChange} ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -443,9 +445,9 @@ Object.keys(files).forEach((key) => {
                       <label className="form-label">IC Copy</label>
                       <div className="input-group">
                       <input type="file" className="form-control" accept="*/*" name="IC" onChange={handleFileChange}  ref={fileInputRef}/>
-                      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+                      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
@@ -463,13 +465,22 @@ Object.keys(files).forEach((key) => {
         onChange={handleFileChange}
         ref={fileInputRef}
       />
-      <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+      {/* <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
         Upload
-      </button>
+      </button> */}
     </div>
                       </div>
                       </div>
 
+                      </div>
+
+                      <div className="row mt-4">
+                        
+                        <div className=" mx-auto text-center p-3">
+                                <button className="btn btn-primary w-50 rounded fw-bold" type="button" onClick={handleSubmit} disabled={!formData.FinNo.trim() || !selectedFile}>
+        Upload
+      </button>
+                        </div>
                       </div>
 
  {/* Display all selected input names */}

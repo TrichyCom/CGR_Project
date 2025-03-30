@@ -5,6 +5,9 @@ const app = express();
 const multer = require("multer");
 const path = require("path");
 
+const moment = require("moment");
+const XLSX = require("xlsx"); // Make sure XLSX is required if handling numeric dates
+
 const cors = require('cors');
 app.use(cors());
 
@@ -292,38 +295,38 @@ app.get("/feilds", (req, res) => {
 
 // add roles
 
-app.get("/roles", (req, res) => {
-  db.query("SELECT * FROM roles", (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
-  });
-});
+// app.get("/roles", (req, res) => {
+//   db.query("SELECT * FROM roles", (err, result) => {
+//     if (err) return res.status(500).json(err);
+//     res.json(result);
+//   });
+// });
 
-app.post("/roles", (req, res) => {
-  const { Roles } = req.body;
-  db.query("INSERT INTO roles (Roles) VALUES (?)", [Roles], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json({ id: result.insertId, Roles });
-  });
-});
+// app.post("/roles", (req, res) => {
+//   const { Roles } = req.body;
+//   db.query("INSERT INTO roles (Roles) VALUES (?)", [Roles], (err, result) => {
+//     if (err) return res.status(500).json(err);
+//     res.json({ id: result.insertId, Roles });
+//   });
+// });
 
 
-app.delete("/roles/:id", (req, res) => {
-  const { id } = req.params;
-  db.query("DELETE FROM roles WHERE id = ?", [id], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Role deleted successfully!" });
-  });
-});
+// app.delete("/roles/:id", (req, res) => {
+//   const { id } = req.params;
+//   db.query("DELETE FROM roles WHERE id = ?", [id], (err, result) => {
+//     if (err) return res.status(500).json(err);
+//     res.json({ message: "Role deleted successfully!" });
+//   });
+// });
 
 
 // get Roles column
-app.get("/roles", (req, res) => {
-  db.query("SELECT * FROM roles", (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
-  });
-});
+// app.get("/roles", (req, res) => {
+//   db.query("SELECT * FROM roles", (err, result) => {
+//     if (err) return res.status(500).json(err);
+//     res.json(result);
+//   });
+// });
 
 
 
@@ -654,6 +657,139 @@ app.post('/workerreportfiles', upload.fields([
       }
   });
 });
+
+
+
+
+// Fetch all certificates
+app.get("/getcertificates", (req, res) => {
+  db.query("SELECT * FROM CertificateList", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Add a certificate
+app.post("/postcertificates", (req, res) => {
+  const { CertificateList } = req.body;
+
+  if (!CertificateList || CertificateList.trim() === "") {
+    return res.status(400).json({ error: "Certificate name cannot be empty" });
+  }
+
+  db.query(
+    "INSERT INTO CertificateList (CertificateList) VALUES (?)",
+    [CertificateList],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Certificate added successfully", id: result.insertId });
+    }
+  );
+});
+
+// Delete a certificate
+app.delete("/dropcertificates/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
+  db.query("DELETE FROM CertificateList WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Certificate deleted successfully" });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const tableColumns = [
+  "EmpId", "EmpPosition", "CompanyName", "FirstName", "LastName", "ExpYear", "ContNum",
+  "BankAccNum", "SelectFeilds", "Department", "Age", "Gender", "EmergencyContNum",
+  "PanTaxId", "SelectRole", "FinNo", "DOA", "DOI", "DO_Onboard", "WP_No",
+  "PP_No", "DOB", "DO_ThumbPrint", "DO_Renewal", "WP_Expiry", "PP_Expiry",
+  "SelectCourse", "Category", "Cert_No", "DOE", "SMSE", "Rigger", "ssrc_sssrc",
+  "Levels", "DOI_Two", "BalanceDays", "WAHA_M", "Singnel_Man"
+];
+
+app.post("/upload-excel", (req, res) => {
+  const { data } = req.body;
+
+  if (!data || data.length === 0) {
+    return res.status(400).json({ error: "No data received from Excel" });
+  }
+
+  const matchedData = data.map((row) => {
+    let formattedRow = {};
+
+    Object.keys(row).forEach((key) => {
+      const columnName = tableColumns.find(col => col.toLowerCase() === key.toLowerCase());
+      if (columnName) {
+        let value = row[key];
+
+        // ✅ Correcting DOB Format
+        if (columnName === "DOB" && value) {
+          if (!isNaN(value)) {
+            // Convert Excel numeric date to YYYY-MM-DD
+            const date = XLSX.SSF.parse_date_code(Number(value));
+            value = moment.utc({ year: date.y, month: date.m - 1, day: date.d }).format("YYYY-MM-DD");
+          } else if (typeof value === "string") {
+            // Handle text-based dates (e.g., 12-11-2025 or 12/11/2025)
+            let parsedDate = moment(value, ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"], true);
+            if (parsedDate.isValid()) {
+              value = parsedDate.format("YYYY-MM-DD");
+            } else {
+              console.warn(`Invalid DOB format: ${value}`);
+              value = null; // Skip invalid date
+            }
+          }
+        }
+
+        formattedRow[columnName] = value;
+      }
+    });
+
+    return formattedRow;
+  });
+
+  // ✅ Insert Matched Data into MySQL
+  const insertPromises = matchedData.map((row) => {
+    return new Promise((resolve, reject) => {
+      db.query("INSERT INTO addworker SET ?", row, (err, result) => {
+        if (err) {
+          console.error("Error inserting data:", err);
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  });
+
+  // Wait for all insert queries to finish
+  Promise.all(insertPromises)
+    .then(() => res.json({ message: "Excel data successfully inserted!" }))
+    .catch(() => res.status(500).json({ error: "Error inserting some rows" }));
+});
+
+
+
 
 
 

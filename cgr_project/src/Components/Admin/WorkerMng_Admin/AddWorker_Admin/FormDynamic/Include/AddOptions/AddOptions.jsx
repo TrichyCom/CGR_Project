@@ -52,44 +52,44 @@ const AddOptions = () => {
 
 // roles
 
-  const [roles, setRoles] = useState([]); // Store roles from DB
-  const [newRole, setNewRole] = useState(""); // Input value
+  // const [roles, setRoles] = useState([]); // Store roles from DB
+  // const [newRole, setNewRole] = useState(""); // Input value
 
-  useEffect(() => {
-    fetchRoles(); // Fetch roles on component load
-  }, []);
+  // useEffect(() => {
+  //   fetchRoles(); // Fetch roles on component load
+  // }, []);
 
   // Fetch roles from the database
-  const fetchRoles = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/roles"); // Replace with your API URL
-      setRoles(response.data);
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-    }
-  };
+  // const fetchRoles = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:3001/roles"); // Replace with your API URL
+  //     setRoles(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching roles:", error);
+  //   }
+  // };
 
   // Add a new role
-  const handleAddRole = async () => {
-    if (!newRole.trim()) return alert("Please enter a role!");
-    try {
-      await axios.post("http://localhost:3001/roles", { Roles: newRole });
-      setNewRole(""); // Clear input field
-      fetchRoles(); // Refresh roles list
-    } catch (error) {
-      console.error("Error adding role:", error);
-    }
-  };
+  // const handleAddRole = async () => {
+  //   if (!newRole.trim()) return alert("Please enter a role!");
+  //   try {
+  //     await axios.post("http://localhost:3001/roles", { Roles: newRole });
+  //     setNewRole(""); // Clear input field
+  //     fetchRoles(); // Refresh roles list
+  //   } catch (error) {
+  //     console.error("Error adding role:", error);
+  //   }
+  // };
 
   // Delete a role
-  const handleDeleteRole = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3001/roles/${id}`);
-      fetchRoles(); // Refresh roles list
-    } catch (error) {
-      console.error("Error deleting role:", error);
-    }
-  };
+  // const handleDeleteRole = async (id) => {
+  //   try {
+  //     await axios.delete(`http://localhost:3001/roles/${id}`);
+  //     fetchRoles(); // Refresh roles list
+  //   } catch (error) {
+  //     console.error("Error deleting role:", error);
+  //   }
+  // };
 
 
 
@@ -139,6 +139,82 @@ const handleDeleteDepartment = async (id) => {
   }
 };
 
+
+
+
+// certificate
+const [certificateName, setCertificateName] = useState("");
+const [certificateList, setCertificateList] = useState([]);
+
+// Fetch the certificate list from the database
+useEffect(() => {
+  fetchCertificates();
+}, []);
+
+const fetchCertificates = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/getcertificates");
+    setCertificateList(response.data);
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+  }
+};
+
+// Add a new certificate
+// const handleAddCertificate = async () => {
+//   if (!certificateName.trim()) {
+//     alert("Certificate name cannot be empty");
+//     return;
+//   }
+
+//   try {
+//     await axios.post("http://localhost:3001/postcertificates", {
+//       CertificateList: certificateName, // Match backend column name
+//     });
+//     setCertificateName(""); // Clear input field after adding
+//     fetchCertificates(); // Refresh list
+//   } catch (error) {
+//     console.error("Error adding certificate:", error);
+//   }
+// };
+
+
+const handleAddCertificate = async () => {
+  const trimmedName = certificateName.trim(); // Trim spaces
+
+  if (!trimmedName) {
+    alert("Certificate name cannot be empty or just spaces!");
+    return;
+  }
+
+  try {
+    await axios.post("http://localhost:3001/postcertificates", {
+      CertificateList: trimmedName, // Send trimmed value
+    });
+    setCertificateName(""); // Clear input field after adding
+    fetchCertificates(); // Refresh list
+  } catch (error) {
+    console.error("Error adding certificate:", error);
+  }
+};
+
+
+// Delete a certificate
+const handleDeleteCertificate = async (id) => {
+  if (!id) {
+    console.error("Error: Invalid certificate ID");
+    return;
+  }
+
+  try {
+    await axios.delete(`http://localhost:3001/dropcertificates/${id}`);
+    fetchCertificates(); // Refresh the list
+  } catch (error) {
+    console.error("Error deleting certificate:", error);
+  }
+};
+
+
   return (
     <div>
       <div id="content" className="app-content">
@@ -146,6 +222,7 @@ const handleDeleteDepartment = async (id) => {
       {/* <h1 className="page-header mb-6" style={{  position: "fixed", top: 0, zIndex: 1000 }}>
   ADD OPTIONS
 </h1> */}
+ <div className="container">
       <div class="d-lg-flex mb-lg-3 mb-2">
                         <h1 class="page-header mb-6 flex-1" id='data' >ADD OPTIONS</h1>
                         <div class="row gx-2 pb-lg-3 pb-2"></div>
@@ -213,10 +290,10 @@ const handleDeleteDepartment = async (id) => {
         </div>
 
 {/* Roles */}
-<div className="border border-3 my-4"></div>
+{/* <div className="border border-3 my-4"></div> */}
 
 
-<div className="row gx-2 pb-lg-3 pb-2">
+{/* <div className="row gx-2 pb-lg-3 pb-2">
         <div className="col-lg-3">
           <h1 className="page-header mb-6 yellowtext">Roles</h1>
         </div>
@@ -237,10 +314,10 @@ const handleDeleteDepartment = async (id) => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Table */}
-      <div className="table-responsive">
+      {/* <div className="table-responsive">
         <table className="table table-striped text-nowrap mb-0 fs-11px">
           <thead className="text-uppercase bg-light">
             <tr>
@@ -266,7 +343,7 @@ const handleDeleteDepartment = async (id) => {
             ))}
           </tbody>
         </table>
-      </div>
+      </div> */}
 
 {/* Department */}
 <div className="border border-3 my-4"></div>
@@ -326,6 +403,64 @@ const handleDeleteDepartment = async (id) => {
 
 
 
+      {/* Certificates */}
+<div className="border border-3 my-4"></div>
+
+
+<div className="row gx-2 pb-lg-3 pb-2">
+        <div className="col-lg-3">
+          <h1 className="page-header mb-6 yellowtext">Certificates</h1>
+        </div>
+        <div className="col-lg-4">
+          <div className="position-relative">
+            <input
+              type="text"
+              className="form-control ps-50px"
+              placeholder="Add Certificates"
+              value={certificateName}
+              onChange={(e) => setCertificateName(e.target.value.replace(/^\s+/, ""))} // Prevent leading spaces
+            />
+            <button
+              className="btn btn-primary position-absolute start-2 top-0 shadow-none"
+              onClick={handleAddCertificate}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="table-responsive">
+        <table className="table table-striped text-nowrap mb-0 fs-11px">
+          <thead className="text-uppercase bg-light">
+            <tr>
+              <th className="fw-bold text-dark">No.</th>
+              <th className="fw-bold text-dark">Certificates</th>
+              <th className="fw-bold text-dark">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {certificateList.map((cert, index) => (
+              <tr key={cert.id}>
+                <td>{index + 1}</td>
+                <td>{cert.CertificateList}</td>
+                <td>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteCertificate(cert.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
+      </div>
       </div>
     </div>
   );
