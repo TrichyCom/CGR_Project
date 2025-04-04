@@ -127,41 +127,116 @@ if (newData.Expiry) {
     }
   };
 
+  // const handleSubmit = async (e) => {
+    
+  //   e.preventDefault();
+
+  //   if (!formData.FinNo) {
+  //     alert("Please enter FinNo.");
+  //     return;
+  //   }
+
+  //   // Convert SelectFields array to a string before sending to the backend
+  //   const formattedData = {
+  //     ...formData,
+  //     SelectFields: JSON.stringify(formData.SelectFields),
+  //   };
+
+  //   try {
+  //     const response = await fetch("http://localhost:3001/addworker", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formattedData),
+  //     });
+
+  //     const result = await response.json();
+  //     console.log(result.message);
+  //     alert("Worker added successfully!");
+  //     localStorage.removeItem("workerData");
+
+  //     localStorage.removeItem("selectedInputNames");
+
+   
+  //     // setFormData({}); // Clear form data
+  //     // setSelectedInputNames([]); // Clear selected names
+
+  //     navigate("/workermngadmin");
+  //     setFormData({
+  //       SelectCourse: "",
+  //       Category: "",
+  //       Levels: "",
+  //       Cert_No: "",
+  //       DOI: "",
+  //       DOE: "",
+  //       BalanceDays: "0",
+  //       SMSE: "",
+  //       WAHA_M: "",
+  //       Rigger: "",
+  //       ssrc_sssrc: "",
+  //       Singnel_Man: "",
+  //       SelectFields: [],
+  //     });
+
+
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //   }
+  // };
+
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!formData.FinNo) {
       alert("Please enter FinNo.");
       return;
     }
-
-    // Convert SelectFields array to a string before sending to the backend
-    const formattedData = {
+  
+    const base64Image = localStorage.getItem("workerProfileImg");
+    const formDataToSend = new FormData();
+  
+    // Convert base64 to File (Blob)
+    if (base64Image) {
+      const byteString = atob(base64Image.split(",")[1]);
+      const mimeString = base64Image.split(",")[0].split(":")[1].split(";")[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+      const file = new File([blob], "profile_image.jpg", { type: mimeString });
+      formDataToSend.append("ProfileImg", file);
+    }
+  
+    // Format SelectFields as string
+    const allWorkerData = {
       ...formData,
-      SelectFields: JSON.stringify(formData.SelectFields),
+      SelectFields: formData.SelectFields, // keep it as array; backend stringifies it
     };
-
+  
+    formDataToSend.append("data", JSON.stringify(allWorkerData));
+  
     try {
-      const response = await fetch("http://localhost:3001/addworker", {
-        method: "POST",
+      const res = await axios.post("http://localhost:3001/addworker", formDataToSend, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
-        body: JSON.stringify(formattedData),
       });
-
-      const result = await response.json();
-      console.log(result.message);
+  
       alert("Worker added successfully!");
+      console.log(res.data.message);
+  
+      localStorage.removeItem("workerProfileImg");
       localStorage.removeItem("workerData");
-
       localStorage.removeItem("selectedInputNames");
-
-   
-      // setFormData({}); // Clear form data
-      // setSelectedInputNames([]); // Clear selected names
-
+  
       navigate("/workermngadmin");
+  
       setFormData({
         SelectCourse: "",
         Category: "",
@@ -177,14 +252,13 @@ if (newData.Expiry) {
         Singnel_Man: "",
         SelectFields: [],
       });
-
-
+  
     } catch (error) {
       console.error("Error submitting form:", error);
+      alert("Upload failed!");
     }
   };
-
-
+  
 
 
 
@@ -593,7 +667,7 @@ const fetchCertificates = async () => {
               
                 <p className="py-1 mx-auto text-center" style={{height:'195px'}}>
           <FaExclamationCircle  className="w-50 h-50 p-3"/>
-          <p> No certificates found for this FinNo.</p>
+          <p> No certificates</p>
          
         </p>
               )}
@@ -694,7 +768,7 @@ const fetchCertificates = async () => {
       ) : (
         <div className="text-center" style={{height:'310px'}}>
           <FaGraduationCap className="h-25 w-25 mt-5"/>
-        <p className="py-3">No certificates found for this FinNo.</p>
+        <p className="py-3">No Education Files</p>
         </div>
       )}
     </div>

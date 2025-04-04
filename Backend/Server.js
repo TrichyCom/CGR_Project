@@ -134,24 +134,30 @@ app.use(bodyParser.json());
 // Add Worker 
 
 
-app.post("/addworker", (req, res) => {
-    const data = req.body;
+// app.post("/addworker", (req, res) => {
+//     const data = req.body;
       
-        // Ensure SelectFeilds is stored as a JSON string
-    const selectFieldsString = JSON.stringify(data.SelectFeilds);
+//         // Ensure SelectFeilds is stored as a JSON string
+//     const selectFieldsString = JSON.stringify(data.SelectFeilds);
+
+    app.post("/addworker", upload.single("ProfileImg"), (req, res) => {
+      const data = JSON.parse(req.body.data); // sent as JSON string in `data` field from frontend
+      const profileImgPath = req.file ? req.file.path : null; // file path from multer
+    
+      const selectFieldsString = JSON.stringify(data.SelectFeilds);
 
     const query = `INSERT INTO addworker (EmpId, EmpPosition, CompanyName, FirstName, LastName, ExpYear, ContNum, BankAccNum, SelectFeilds, Department, Age, Gender,
       EmergencyContNum, PanTaxId, SelectRole, FinNo, DOA, DOI, DO_Onboard, WP_No, PP_No, DOB,
-      DO_ThumbPrint, DO_Renewal, WP_Expiry, PP_Expiry, SelectCourse, Category, Cert_No, DOE,
-      SMSE, Rigger, ssrc_sssrc, Levels, DOI_Two, BalanceDays, WAHA_M, Singnel_Man)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      DO_ThumbPrint, DO_Renewal, WP_Expiry, WP_BalDays, PP_Expiry, PP_BalDays, SelectCourse, Category, Cert_No, DOE,
+      SMSE, Rigger, ssrc_sssrc, Levels, DOI_Two, BalanceDays, WAHA_M, Singnel_Man, ProfileImg)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const values = [
       data.EmpId, data.EmpPosition, data.CompanyName, data.FirstName, data.LastName, data.ExpYear, data.ContNum, 
       data.BankAccNum,selectFieldsString, data.Department, data.Age, 
       data.Gender, data.EmergencyContNum, data.PanTaxId, data.SelectRole, data.FinNo, data.DOA, 
-      data.DOI, data.DO_Onboard, data.WP_No, data.PP_No, data.DOB, data.DO_ThumbPrint, data.DO_Renewal, data.WP_Expiry, data.PP_Expiry,
+      data.DOI, data.DO_Onboard, data.WP_No, data.PP_No, data.DOB, data.DO_ThumbPrint, data.DO_Renewal, data.WP_Expiry, data.WP_BalDays, data.PP_Expiry,  data.PP_BalDays,
       data.SelectCourse, data.Category, data.Cert_No, data.DOE, data.SMSE, data.Rigger, data.ssrc_sssrc, data.Levels,
-      data.DOI_Two, data.BalanceDays, data.WAHA_M, data.Singnel_Man
+      data.DOI_Two, data.BalanceDays, data.WAHA_M, data.Singnel_Man, profileImgPath
     ];
   
     db.query(query, values, (err, result) => {
@@ -161,6 +167,27 @@ app.post("/addworker", (req, res) => {
       res.json({ message: "Worker added successfully!" });
     });
   });
+
+
+  // get worker details finno based particular worker data
+
+  app.get("/addworker/:finNo", (req, res) => {
+    const { finNo } = req.params;
+  
+    const query = "SELECT * FROM addworker WHERE FinNo = ?";
+    db.query(query, [finNo], (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: "Error fetching worker data", error: err });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({ message: "No worker found with that FinNo" });
+      }
+  
+      res.json(results[0]); // return single result
+    });
+  });
+  
   
 
 
@@ -722,10 +749,10 @@ app.delete("/dropcertificates/:id", (req, res) => {
 const tableColumns = [
   "EmpId", "EmpPosition", "CompanyName", "FirstName", "LastName", "ExpYear", "ContNum",
   "BankAccNum", "SelectFeilds", "Department", "Age", "Gender", "EmergencyContNum",
-  "PanTaxId", "SelectRole", "FinNo", "DOA", "DOI", "DO_Onboard", "WP_No",
-  "PP_No", "DOB", "DO_ThumbPrint", "DO_Renewal", "WP_Expiry", "PP_Expiry",
+  "PanTaxId", "SelectRole", "FinNo", "DOA", "DOI", "DO_Onboard", "WP_No", "WP_BalDays",
+  "PP_No", "PP_BalDays", "DOB", "DO_ThumbPrint", "DO_Renewal", "WP_Expiry", "PP_Expiry",
   "SelectCourse", "Category", "Cert_No", "DOE", "SMSE", "Rigger", "ssrc_sssrc",
-  "Levels", "DOI_Two", "BalanceDays", "WAHA_M", "Singnel_Man"
+  "Levels", "DOI_Two", "BalanceDays", "WAHA_M", "Singnel_Man" ,"ProfileImg"
 ];
 
 app.post("/upload-excel", (req, res) => {
@@ -744,7 +771,7 @@ app.post("/upload-excel", (req, res) => {
         let value = row[key];
 
         // ✅ Correcting DOB Format
-        if (columnName === "DOB" && value) {
+        if (["DOB", "DOA", "WP_Expiry", "PP_Expiry"].includes(columnName) && value) {
           if (!isNaN(value)) {
             // Convert Excel numeric date to YYYY-MM-DD
             const date = XLSX.SSF.parse_date_code(Number(value));

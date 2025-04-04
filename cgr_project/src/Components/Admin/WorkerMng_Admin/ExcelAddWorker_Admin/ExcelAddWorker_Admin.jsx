@@ -511,7 +511,7 @@ const handleworkerSubmit = async () => {
         {/* worker data */}
         <h1>Add Worker Data</h1>
         <div className="input-group my-4">
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} className="form-control w-50" />
+      <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} className="form-control w-50" />
       <button className="btn btn-warning" onClick={handleworkerSubmit} disabled={excelData.length === 0}>
         Upload Excel
       </button> 

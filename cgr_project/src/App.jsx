@@ -16,6 +16,7 @@ import WorkerAttananceMng from './Components/Worker/WorkerAttananceMng/WorkerAtt
 import FormDynamic from './Components/Admin/WorkerMng_Admin/AddWorker_Admin/FormDynamic/FormDynamic';
 import ViewWorker_Admin from './Components/Admin/WorkerMng_Admin/ViewWorker_Admin/ViewWorker_Admin';
 import ExcelAddWorker_Admin from './Components/Admin/WorkerMng_Admin/ExcelAddWorker_Admin/ExcelAddWorker_Admin';
+import ProjectMngDash from './Components/Admin/ProjectMng_Admin/ProjectMngDash/ProjectMngDash';
 function App() {
 
   return (
@@ -25,7 +26,11 @@ function App() {
           <Route path='/' element={<Signup />} ></Route>
           <Route path='/login' element={<Login />} ></Route>
 
-          {/* Admin */}
+          {/* Admin start*/}
+
+
+          {/* ------ Worker Mng Admin start------ */}
+
           <Route path='/dashboardadmin' element={<DashboardAdmin />} ></Route>
           <Route path='/workermngadmin' element={<WorkerMng_Admin />} ></Route>
 
@@ -37,13 +42,27 @@ function App() {
           {/* excel addworker admin*/}
           <Route path='/exceladdworker' element={<ExcelAddWorker_Admin />} ></Route>
 
-           {/* AddOptions Addworkeradmin */}
+          {/* AddOptions Addworkeradmin */}
           <Route path='/formdynamic' element={<FormDynamic />} ></Route>
-          
-           {/* View particular worker data */}
+
+          {/* View particular worker data */}
           <Route path='/viewworkerdata' element={<ViewWorker_Admin />} ></Route>
 
+          {/* ------ Worker Mng Admin end ------ */}
+
+          {/* ------ Project Mng Admin start ------ */}
+
+          {/* Add & View Project list */}
+          <Route path='/viewprojectlist' element={<ProjectMngDash />} ></Route>
+
+          {/* ------ Project Mng Admin end ------ */}
+
+          {/* Admin end */}
+
+
+
           {/* worker */}
+
           {/* <Route path='/workerdashboard' element={<WorkerDashboard />} ></Route> */}
           {/* <Route path='/taskmngworker' element={<WorkerDashboard />} ></Route> */}
           {/* <Route path='/attanancemngworker' element={<WorkerDashboard />} ></Route> */}

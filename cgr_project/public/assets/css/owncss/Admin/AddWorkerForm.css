@@ -206,3 +206,281 @@
 #educationtable::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* Darker thumb on hover */
 }
+
+
+
+
+
+
+
+/* gender button css */
+/* From Uiverse.io by m1her */ 
+.radio-input {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background-color: rgba(255, 255, 255, 0.803);
+  padding: 3px;
+  width: 170px;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.radio-input input {
+  display: none;
+}
+
+.radio-input .label {
+  width: 80px;
+  height: 30px;
+  background: linear-gradient(to bottom, #333333, rgb(36, 35, 35));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: all 0.1s linear;
+  border-top: 1px solid #4e4d4d;
+  background-color: #333333;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0px 17px 5px 1px rgba(0, 0, 0, 0.2);
+}
+
+.label:has(input[type="radio"]:checked) {
+  box-shadow: 0px 17px 5px 1px rgba(0, 0, 0, 0);
+  background: linear-gradient(to bottom, #1d1d1d, #1d1d1d);
+  border-top: none;
+}
+
+.label:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.label:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.label::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 103%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    transparent,
+    transparent 90%
+  );
+  transition: all 0.1s linear;
+  z-index: -1;
+}
+
+.label:has(input[type="radio"]:checked)::before {
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    #cae2fd63,
+    transparent 90%
+  );
+}
+
+.label .text {
+  color: rgb(1, 255, 247);
+  font-size: 10px;
+  line-height: 12px;
+  padding: 0px;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all 0.1s linear;
+  text-shadow:
+    -1px -1px 1px rgb(224, 224, 224, 0.1),
+    0px 2px 3px rgb(0, 0, 0, 0.3);
+}
+
+.label input[type="radio"]:checked + .text {
+  color: rgb(202, 226, 253);
+  text-shadow: 0px 0px 12px #cae2fd;
+}
+
+
+
+
+/* form input css */
+
+/* From Uiverse.io by cohencoo */ 
+.input {
+  border-radius: 10px;
+  outline: 2px solid #FEBF00;
+  border: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color:transparent;
+  outline-offset: 3px;
+  padding: 3px 1rem;
+  transition: 0.25s;
+}
+
+.input:focus {
+  outline-offset: 5px;
+  background-color:transparent
+}
+
+
+
+/* total worker count css */
+/* From Uiverse.io by SouravBandyopadhyay */ 
+.notification {
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  position: relative;
+  /* width: 18rem; */
+  /* height: 8rem; */
+  background: #494949b6;
+  border-radius: 1rem;
+  overflow: hidden;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 16px;
+  --gradient: linear-gradient(to bottom, #2eadff, #3d83ff, #7e61ff);
+  /* --color: #32a6ff */
+  --color: #0099ff;
+}
+
+.notification:before {
+  position: absolute;
+  content: "";
+  inset: 0.0625rem;
+  border-radius: 0.9375rem;
+  background: #dcdcdc;
+  z-index: 2
+}
+
+.notification:after {
+  position: absolute;
+  content: "";
+  width: 0.25rem;
+  inset: 0.65rem auto 0.65rem 0.5rem;
+  border-radius: 0.125rem;
+  background: var(--gradient);
+  transition: transform 300ms ease;
+  z-index: 4;
+}
+
+.notification:hover:after {
+  transform: translateX(0.15rem)
+}
+
+.notititle {
+  color: var(--color);
+  /* padding: 0.65rem 0.25rem 0.4rem 1.25rem; */
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: transform 300ms ease;
+  z-index: 5;
+}
+
+.notification:hover .notititle {
+  transform: translateX(0.15rem)
+}
+
+.notibody {
+  color: #99999d;
+  padding: 0 1.25rem;
+  transition: transform 300ms ease;
+  z-index: 5;
+}
+
+.notification:hover .notibody {
+  transform: translateX(0.25rem)
+}
+
+.notiglow,
+.notiborderglow {
+  position: absolute;
+  width: 20rem;
+  height: 20rem;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle closest-side at center, white, transparent);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.notiglow {
+  z-index: 3;
+}
+
+.notiborderglow {
+  z-index: 1;
+}
+
+.notification:hover .notiglow {
+  opacity: 0.1
+}
+
+.notification:hover .notiborderglow {
+  opacity: 0.1
+}
+
+.note {
+  color: var(--color);
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.9rem;
+  width: 75%;
+}
+
+
+
+
+
+
+
+/* view button css */
+
+/* From Uiverse.io by nikk7007 */ 
+.button {
+  /* padding: 0.8em 1.8em; */
+  border: 2px solid #17C3B2;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
+  transition: .3s;
+  z-index: 1;
+  font-family: inherit;
+  color: #17C3B2;
+ }
+ 
+ .button::before {
+  content: '';
+  width: 0;
+  height: 300%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: #17C3B2;
+  transition: .5s ease;
+  display: block;
+  z-index: -1;
+ }
+ 
+ .button:hover::before {
+  width: 105%;
+ }
+ 
+ .button:hover {
+  color: #111;
+ }
+ 

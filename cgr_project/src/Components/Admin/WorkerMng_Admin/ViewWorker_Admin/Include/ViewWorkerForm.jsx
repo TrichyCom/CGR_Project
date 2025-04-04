@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import '../../../../../../public/assets/css/owncss/SignupLogin.css'
+import '../../../../../../public/assets/css/owncss/Admin/ViewWorkerForm.css'
+import { User } from 'lucide-react';
+import { HiIdentification } from "react-icons/hi";
 const ViewWorkerForm = () => {
   const { state } = useLocation();
   const worker = state?.worker || {};
@@ -44,7 +47,6 @@ const ViewWorkerForm = () => {
         });
     }
   }, [worker.FinNo]);
-  
 
 
 //   useEffect(() => {
@@ -60,6 +62,29 @@ const ViewWorkerForm = () => {
 //   }
 // }, [worker.FinNo]);
 
+// const [selectedFinNo, setSelectedFinNo] = useState(null);
+//   const [selectedWorker, setSelectedWorker] = useState(null);
+
+const [selectedWorker, setSelectedWorker] = useState(null);
+
+useEffect(() => {
+  if (!worker?.FinNo) return;
+
+  const fetchWorker = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/addworker/${worker.FinNo}`);
+      setSelectedWorker(response.data);
+    } catch (error) {
+      console.error("Error fetching worker details:", error);
+    }
+  };
+
+  fetchWorker();
+}, [worker?.FinNo]);
+
+
+
+
   return (
     <div id="content" className="app-content">
       <h1 className="page-header bluetext fw-bold">VIEW DETAILS</h1>
@@ -67,6 +92,88 @@ const ViewWorkerForm = () => {
         <div className="card-header yellowtext fs-6 fw-bold">WORKER DETAILS</div>
         <div className="card-body">
           <form>
+
+          <div className="row">
+          <div className="col-md-6">
+          {/* {selectedWorker?.ProfileImg && (
+  <img
+    src={`http://localhost:3001/${selectedWorker.ProfileImg}`}
+    alt="Profile"
+    width={230}
+    height={230}
+    className=""
+  />
+)} */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1 className="page-header fw-bold">Profile</h1>
+<div class="profilecard">
+        <div class="mail">
+        <User size={25} color="#555" />
+        </div>
+        <div class="profile-pic">
+        {selectedWorker?.ProfileImg && (
+  <img
+    src={`http://localhost:3001/${selectedWorker.ProfileImg}`}
+    alt="Profile"
+    width={80}
+    height={80}
+    className="profileimg"
+  />
+)}
+
+        </div>
+        
+        <div class="bottom">
+            <div class="content">
+              <div className="my-5"></div>
+                <span class="name">{worker.FirstName} {worker.LastName}</span>
+                <span class="about-me">{worker.EmpPosition}</span>
+            </div>
+           <div class="bottom-bottom">
+            <div class="social-links-container"> 
+            <span className=""> <h6 className="fw-bold text-dark">Emp ID : <span className="bg-white p-2 rounded">121212122</span></h6></span>
+            </div>
+            {/* <button class="button">Contact Me</button> */}
+           </div>
+        </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+            </div>
+
             <div className="row">
               <div className="col-md-6">
                 <label className="form-label">Employee ID</label>
@@ -115,7 +222,7 @@ const ViewWorkerForm = () => {
               <div className="col-md-12">
               <table className="table table-bordered">
               <thead className="table-dark">
-              <label className="form-label"></label>
+              {/* <label className="form-label"></label> */}
               <tr>
             <th colSpan="2">Certificate Files</th>
           </tr>
@@ -225,6 +332,35 @@ const ViewWorkerForm = () => {
               </div>
             </div>
           </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
         </div>
       </div>
     </div>

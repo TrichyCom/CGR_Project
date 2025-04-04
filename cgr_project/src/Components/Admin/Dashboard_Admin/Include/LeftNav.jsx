@@ -14,9 +14,14 @@ function LeftNav() {
         const path = location.pathname;
         if (path.includes("/workermngadmin")) {
             setActiveMenu("WORKERSMANAGEMENT");
-        } else if (path.includes("/dashboardadmin")) {
+        } 
+        else if (path.includes("/dashboardadmin")) {
             setActiveMenu("TOOLSMANAGEMENT");
         }
+        else if (path.includes("/viewprojectlist")) {
+            setActiveMenu("PROJECTMANAGEMENT");
+        }
+        
     }, [location]);
 
     const handleMenuClick = (menuName) => {
@@ -157,7 +162,7 @@ function LeftNav() {
                             className={`menu-item py-1 rounded-end rounded-5 my-1 ${activeMenu === "PROJECTMANAGEMENT" ? "leftnavmenubg" : "bg-light"}`}
                             onClick={() => handleMenuClick("PROJECTMANAGEMENT")}
                         >
-                            <Link to="#" className="menu-link">
+                            <Link to="/viewprojectlist" className="menu-link">
                                 <span
                                     className={`menu-icon ${activeMenu === "PROJECTMANAGEMENT" ? "fw-bold rounded" : "text-dark rounded border border-dark border-2"}`}
                                     style={activeMenu == "PROJECTMANAGEMENT" ? { background: 'rgb(255, 255, 255)', color: '#1A5D99', border: '2px solid #C9D931' } : {}}

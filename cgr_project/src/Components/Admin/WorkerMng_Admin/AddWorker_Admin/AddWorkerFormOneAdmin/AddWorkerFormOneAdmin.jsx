@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
@@ -41,9 +41,9 @@ const AddWorkerFormOneAdmin = () => {
     ContNum: "",
     EmergencyContNum: "",
     BankAccNum: "",
-    SelectFeilds:[],
+    SelectFeilds: [],
     PanTaxId: "",
-    SelectRole:"",
+    SelectRole: "",
   });
 
   // Load stored data
@@ -79,7 +79,7 @@ const AddWorkerFormOneAdmin = () => {
   //       : [...prevData.SelectFeilds, role], // Add if not selected
   //   }));
   // };
-  
+
   const handleRoleChange = (e) => {
     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
     setFormData((prevData) => ({
@@ -89,7 +89,7 @@ const AddWorkerFormOneAdmin = () => {
   };
 
 
-  
+
   // Handle navigation to next form
   const handleNext = () => {
     localStorage.setItem("workerData", JSON.stringify(formData));
@@ -102,7 +102,7 @@ const AddWorkerFormOneAdmin = () => {
 
 
 
-  
+
   const [isOpen, setIsOpen] = useState(false); // State to handle toggle
 
   useEffect(() => {
@@ -167,9 +167,27 @@ const AddWorkerFormOneAdmin = () => {
         console.error("Error fetching departments:", error);
       });
   }, []);
+
+
+
+   const fileInputRef = useRef(null); // Reference for file input
+   const [selectedFile, setSelectedFile] = useState(null);
+   const previewImg = localStorage.getItem("workerProfileImg");
+   const handleFileChange = (e) => {
+     const file = e.target.files[0];
+     if (file) {
+       const reader = new FileReader();
+       reader.onloadend = () => {
+         localStorage.setItem("workerProfileImg", reader.result); // base64 string
+         setSelectedFile(file); // save file in state for later use
+       };
+       reader.readAsDataURL(file); // convert to base64
+     }
+   };
+   
   return (
     <>
-    {/* <div>
+      {/* <div>
       <h1>Add Worker - Page 1</h1>
       <input
         type="text"
@@ -211,37 +229,46 @@ const AddWorkerFormOneAdmin = () => {
 
 
 
-<div id="content" className="app-content">
-<div className="conainer">
-  <div className="row justify-content-center">
-    <div className="col-xl-11">
-      <div className="row">
-        <div className="col-xl-12">
-       
-          <h1 className="page-header bluetext fw-bold">
-           ADD WORKER <small>please enter worker details here...</small>
-          </h1>
-          <hr className="mb-4 opacity-3" />
-          <div id="formControls" className="mb-2">
-        {/* page 1     */}
-            <div className="card">
-              <div className="card-header d-flex justify-content-between align-items-center yellowtext fs-6 fw-bold">
-                WORKER DETAILS
-             
-              </div>
-              <div className="card-body pb-2">
-                <form>
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Employee ID</label>
-                        <input type="text" className="form-control" name="EmpId" id="exampleFormControlInput1" placeholder="Employee ID" onChange={handleChange} value={formData.EmpId} />
+      <div id="content" className="app-content">
+        <div className="conainer">
+          <div className="row justify-content-center">
+            <div className="col-xl-11">
+              <div className="row">
+                <div className="col-xl-12">
+                <div className="row">
+                <div className="col-xl-6">
+                  <h1 className="page-header bluetext fw-bold">
+                    ADD WORKER <small>please enter worker details here...</small>
+                  </h1>
+                  </div>
+                  <div className="col-xl-6">
+                    <div className="text-end">
+                  {previewImg && (
+  <img src={previewImg} alt="Preview" width={50} height={50} className="rounded-5 "/>)}
+  </div>
+                  </div>
+                  </div>
+                  <hr className="mb-4 opacity-3" />
+                  <div id="formControls" className="mb-2">
+                    {/* page 1     */}
+                    <div className="card">
+                      <div className="card-header d-flex justify-content-between align-items-center yellowtext fs-6 fw-bold">
+                        WORKER DETAILS
+
                       </div>
-                      </div>
-                      <div className="col-xl-6">
-                      <div className="mb-3">
-                      <label className="form-label" htmlFor="exampleFormControlInput1">Employee Position</label>
-                      {/* <div className="d-flex flex-wrap">
+                      <div className="card-body pb-2">
+                        <form>
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Employee ID</label>
+                                <input type="text" className="form-control" name="EmpId" id="exampleFormControlInput1" placeholder="Employee ID" onChange={handleChange} value={formData.EmpId} />
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Employee Position</label>
+                                {/* <div className="d-flex flex-wrap">
     {["Supervisor", "ProjectManager", "OfficePersonel", "Worker"].map((position) => (
       <div key={position} className="form-check me-3 ">
         <input
@@ -260,210 +287,236 @@ const AddWorkerFormOneAdmin = () => {
     ))}
   </div> */}
 
-<select
-  className="form-select"
-  name="EmpPosition"
-  value={formData.EmpPosition}
-  onChange={handleChange}
->
-  <option value="">Select Position</option>
-  {["Supervisor", "ProjectManager", "OfficePersonel", "Worker"].map((position) => (
-    <option key={position} value={position}>
-      {position}
-    </option>
-  ))}
-</select>
+                                <select
+                                  className="form-select"
+                                  name="EmpPosition"
+                                  value={formData.EmpPosition}
+                                  onChange={handleChange}
+                                >
+                                  <option value="">Select Position</option>
+                                  {["Supervisor", "ProjectManager", "OfficePersonel", "Worker"].map((position) => (
+                                    <option key={position} value={position}>
+                                      {position}
+                                    </option>
+                                  ))}
+                                </select>
 
-                      </div>
-                      </div>
-                      {/* <div className="mb-3">
+                              </div>
+                            </div>
+                            {/* <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlFile1">File input</label>
                         <input type="file" className="form-control" id="exampleFormControlFile1" />
                       </div> */}
-                   
-                    
-                  </div>
 
 
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Company</label>
-                        {/* <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Company" name="CompanyName" onChange={handleChange} value={formData.CompanyName}/> */}
-                        <select
-  className="form-select"
-  name="CompanyName"
-  onChange={handleChange}
-  value={formData.CompanyName}
-  id="exampleFormControlInput1"
->
-  <option value="" className="text-dark">Select Company</option>
-  <option value="Company1" className="text-dark">PNI</option>
-  <option value="Company2" className="text-dark">CGR</option>
-</select>
-
-                      </div>
-                      </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Department</label>
-                        <select
-      className="form-select"
-      id="exampleFormControlSelect1"
-      name="Department"
-      onChange={handleChange}
-      value={formData.Department}
-    >
-      <option value="">Select Department</option>
-      {departments.map((dept) => (
-        <option key={dept.id} value={dept.Department}>
-          {dept.Department}
-        </option>
-      ))}
-    </select>
-                      </div>
-                      </div>
-                      </div>
+                          </div>
 
 
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Company</label>
+                                {/* <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Company" name="CompanyName" onChange={handleChange} value={formData.CompanyName}/> */}
+                                <select
+                                  className="form-select"
+                                  name="CompanyName"
+                                  onChange={handleChange}
+                                  value={formData.CompanyName}
+                                  id="exampleFormControlInput1"
+                                >
+                                  <option value="" className="text-dark">Select Company</option>
+                                  <option value="Company1" className="text-dark">PNI</option>
+                                  <option value="Company2" className="text-dark">CGR</option>
+                                </select>
 
-                      
-                  <div className="row">
-                    <div className="col-xl-6">
-                      {/* <div className="mb-3">
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Department</label>
+                                <select
+                                  className="form-select"
+                                  id="exampleFormControlSelect1"
+                                  name="Department"
+                                  onChange={handleChange}
+                                  value={formData.Department}
+                                >
+                                  <option value="">Select Department</option>
+                                  {departments.map((dept) => (
+                                    <option key={dept.id} value={dept.Department}>
+                                      {dept.Department}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+
+
+
+                          <div className="row">
+                            <div className="col-xl-6">
+                              {/* <div className="mb-3">
                         <label className="form-label" htmlFor="exampleFormControlInput1"> Full Name</label>
                         <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Full Name" name="FullName" onChange={handleChange} value={formData.FullName}/>
                       </div> */}
 
-<div className="row">
-<div className="col-xl-6">
-<div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1"> First Name</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="First Name" name="FirstName" onChange={handleChange} value={formData.First}/>
-                      </div>
-  </div>
-<div className="col-xl-6">
-<div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1"> Last Name</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Last Name" name="LastName" onChange={handleChange} value={formData.LastName}/>
-                      </div>
-  </div>
-  </div>
+                              <div className="row">
+                                <div className="col-xl-6">
+                                  <div className="mb-3">
+                                    <label className="form-label" htmlFor="exampleFormControlInput1"> First Name</label>
+                                    <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="First Name" name="FirstName" onChange={handleChange} value={formData.First} />
+                                  </div>
+                                </div>
+                                <div className="col-xl-6">
+                                  <div className="mb-3">
+                                    <label className="form-label" htmlFor="exampleFormControlInput1"> Last Name</label>
+                                    <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Last Name" name="LastName" onChange={handleChange} value={formData.LastName} />
+                                  </div>
+                                </div>
+                              </div>
 
 
-                      </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Age</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Age" name="Age" onChange={handleChange} value={formData.Age}/>
-                      </div>
-                      </div>
-                      </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="row">
+                                <div className="col-xl-6">
+                                  <div className="mb-3">
+                                    <label className="form-label" htmlFor="exampleFormControlInput1">Age</label>
+                                    <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Age" name="Age" onChange={handleChange} value={formData.Age} />
+                                  </div>
+                                </div>
+                                <div className="col-xl-6">
+                                  <div className="mb-3">
+                                    <label className="form-label" htmlFor="exampleFormControlSelect1">Gender</label>
+                                    <select className="form-select" id="exampleFormControlSelect1" name="Gender" onChange={handleChange} value={formData.Gender}>
+                                      <option>Male</option>
+                                      <option>Female</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
 
+                            </div>
 
-
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Experience in Year</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Experience in Year" name="ExpYear" onChange={handleChange} value={formData.ExpYear}/>
-                      </div>
-                      </div>
-                      <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlSelect1">Gender</label>
-                        <select className="form-select" id="exampleFormControlSelect1" name="Gender" onChange={handleChange} value={formData.Gender}>
-                          <option>Male</option>
-                          <option>Female</option>
-                        </select>
-                      </div>
-                      </div>
-                      </div>
+                          </div>
 
 
 
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Contact Number</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Contact Number" name="ContNum" onChange={handleChange} value={formData.ContNum}/>
-                      </div>
-                      </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Emergency Contact Number</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Emergency Contact Number" name="EmergencyContNum" onChange={handleChange} value={formData.EmergencyContNum}/>
-                      </div>
-                      </div>
-                      </div>
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Experience in Year</label>
+                                <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Experience in Year" name="ExpYear" onChange={handleChange} value={formData.ExpYear} />
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">PAN/TAX ID</label>
+                                <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="PAN/TAX ID" name="PanTaxId" onChange={handleChange} value={formData.PanTaxId} />
+                              </div>
+                            </div>
+                          </div>
 
 
 
-                  <div className="row">
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">Bank Account Number</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Bank Account Number" name="BankAccNum" onChange={handleChange} value={formData.BankAccNum}/>
-                      </div>
-                      </div>
-                    <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlInput1">PAN/TAX ID</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="PAN/TAX ID" name="PanTaxId" onChange={handleChange} value={formData.PanTaxId}/>
-                      </div>
-                      </div>
-                      </div>
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Contact Number</label>
+                                <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Contact Number" name="ContNum" onChange={handleChange} value={formData.ContNum} />
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Emergency Contact Number</label>
+                                <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Emergency Contact Number" name="EmergencyContNum" onChange={handleChange} value={formData.EmergencyContNum} />
+                              </div>
+                            </div>
+                          </div>
 
 
 
-                      <div className="row">
-                      <div className="col-xl-6">
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="exampleFormControlSelect1">Select Feilds</label>
-                    
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlInput1">Bank Account Number</label>
+                                <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Bank Account Number" name="BankAccNum" onChange={handleChange} value={formData.BankAccNum} />
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
 
-                      {/* <div className="checkbox-container"> */}
-                     
-                      <button
-  className="btn btn-primary mb-1 p-0 px-1 mx-4"
-  onClick={(e) => {
-    e.preventDefault(); // Prevents the form from submitting
-    setIsOpen(!isOpen);
-  }}
->
-  {isOpen ? "Close" : "Open"} Feilds
-</button>
+                                <label className="form-label">Profile</label>
+                                <div className="input-group">
+                                <input
+  type="file"
+  className="form-control"
+  accept="image/*"
+  name="ProfileImg"
+  ref={fileInputRef}
+  onChange={handleFileChange}
+/>
 
-      {isOpen && (
-        <div className="checkbox-container">
-          {roles.map((role) => (
-            <div key={role} className="checkbox-item">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id={`role-${role}`}
-                value={role}
-                checked={Array.isArray(formData.SelectFeilds) && formData.SelectFeilds.includes(role)}
-                onChange={() => handleCheckboxChange(role)}
-              />
-              <label className="form-check-label" htmlFor={`role-${role}`}>
-                {role}
-              </label>
-            </div>
-          ))}
-        </div>
-      )}
- 
-{/* </div> */}
+
+                                </div>
+                              </div>
+
+
+                            </div>
+                          </div>
 
 
 
+                          <div className="row">
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="exampleFormControlSelect1">Select Feilds</label>
 
-                      </div>
-                      </div>
-                      <div className="col-xl-6">
-                      <div className="mb-3">
-                        {/* <label className="form-label" htmlFor="exampleFormControlSelect1">Select Role</label>
+
+                                {/* <div className="checkbox-container"> */}
+
+                                <button
+                                  className="btn btn-primary mb-1 p-0 px-1 mx-4"
+                                  onClick={(e) => {
+                                    e.preventDefault(); // Prevents the form from submitting
+                                    setIsOpen(!isOpen);
+                                  }}
+                                >
+                                  {isOpen ? "Close" : "Open"} Feilds
+                                </button>
+
+                                {isOpen && (
+                                  <div className="checkbox-container">
+                                    {roles.map((role) => (
+                                      <div key={role} className="checkbox-item">
+                                        <input
+                                          type="checkbox"
+                                          className="form-check-input"
+                                          id={`role-${role}`}
+                                          value={role}
+                                          checked={Array.isArray(formData.SelectFeilds) && formData.SelectFeilds.includes(role)}
+                                          onChange={() => handleCheckboxChange(role)}
+                                        />
+                                        <label className="form-check-label" htmlFor={`role-${role}`}>
+                                          {role}
+                                        </label>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* </div> */}
+
+
+
+
+                              </div>
+                            </div>
+                            <div className="col-xl-6">
+                              <div className="mb-3">
+                                {/* <label className="form-label" htmlFor="exampleFormControlSelect1">Select Role</label>
                         <select className="form-select" id="exampleFormControlSelect1" name="SelectRole" onChange={handleChange} value={formData.SelectRole}>
                         <option value="">Select a role</option>
         {roless.map((role) => (
@@ -472,44 +525,44 @@ const AddWorkerFormOneAdmin = () => {
           </option>
         ))}
                         </select> */}
+                              </div>
+                            </div>
+
+
+                          </div>
+
+
+
+                        </form>
+
+
+                        <div class="d-lg-flex align-items-center mb-n2 py-4 my-3">
+
+
+                          <ul class="pagination pagination-sm mb-0 mx-auto justify-content-center">
+                            {/* <li class="page-item disabled"><Link class="page-link">Previous</Link></li> */}
+
+                            <li class="page-item"><span class=" page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-5" onClick={handleNext} >Next</span></li>
+                          </ul>
+                        </div>
+
+
+
                       </div>
-                      </div>
-                  
-                    
+                    </div>
+
+
+
+
+
                   </div>
-
-
-
-                </form>
-
-
-                <div class="d-lg-flex align-items-center mb-n2 py-4 my-3">
-                 
-              
-                  <ul class="pagination pagination-sm mb-0 mx-auto justify-content-center">
-                      {/* <li class="page-item disabled"><Link class="page-link">Previous</Link></li> */}
-                      
-                      <li class="page-item"><span class=" page-link btn yellowtext border-2 btn-sm d-flex buttonborder fs-6 px-5" onClick={handleNext} >Next</span></li>
-                  </ul>
-              </div>
-
-
-
+                </div>
               </div>
             </div>
-
-
-
-
-            
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-</div>
-</>
+    </>
   );
 };
 
