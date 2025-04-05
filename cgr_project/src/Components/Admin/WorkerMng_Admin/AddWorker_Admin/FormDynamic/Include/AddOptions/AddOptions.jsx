@@ -215,6 +215,47 @@ const handleDeleteCertificate = async (id) => {
 };
 
 
+
+
+
+
+
+const [companyName, setCompanyName] = useState("");
+const [companies, setCompanies] = useState([]);
+
+// Fetch existing companies
+useEffect(() => {
+  axios.get("http://localhost:3001/getCompanies")
+    .then((res) => setCompanies(res.data))
+    .catch((err) => console.error(err));
+}, []);
+
+// Handle input change
+const handleInputChange = (e) => {
+  setCompanyName(e.target.value);
+};
+
+// Handle add company
+const handleAddCompany = () => {
+  if (!companyName.trim()) return;
+
+  axios.post("http://localhost:3001/addCompany", { companyName })
+    .then((res) => {
+      setCompanies([...companies, res.data]); // Add new row to UI
+      setCompanyName(""); // Clear input
+    })
+    .catch((err) => console.error(err));
+};
+
+const handleDelete = (id) => {
+  axios
+    .delete(`http://localhost:3001/deleteCompany/${id}`)
+    .then(() => {
+      setCompanies(companies.filter((company) => company.id !== id));
+    })
+    .catch((err) => console.error(err));
+};
+
   return (
     <div>
       <div id="content" className="app-content">
@@ -459,6 +500,63 @@ const handleDeleteCertificate = async (id) => {
         </table>
       </div>
 
+
+
+        {/* Company List */}
+        <div className="border border-3 my-4"></div>
+
+<div className="row gx-2 pb-lg-3 pb-2">
+  <div className="col-lg-3">
+    <h1 className="page-header mb-6 yellowtext">Company List</h1>
+  </div>
+  <div className="col-lg-4">
+    <div className="position-relative">
+      <input
+        type="text"
+        className="form-control ps-50px"
+        placeholder="Add Company"
+        value={companyName}
+        onChange={handleInputChange}
+      />
+      <button
+        className="btn btn-primary position-absolute start-2 top-0 shadow-none"
+        onClick={handleAddCompany}
+      >
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+
+{/* Table */}
+<div className="table-responsive">
+  <table className="table table-striped text-nowrap mb-0 fs-11px">
+    <thead className="text-uppercase bg-light">
+      <tr>
+        <th className="fw-bold text-dark">No.</th>
+        <th className="fw-bold text-dark">Company</th>
+        <th className="fw-bold text-dark">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {companies.map((company, index) => (
+        <tr key={company.id}>
+          <td>{index + 1}</td>
+          <td>{company.CompanyList}</td>
+          <td>
+  <button
+    className="btn btn-sm btn-danger"
+    onClick={() => handleDelete(company.id)}
+  >
+    Delete
+  </button>
+</td>
+
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
       </div>
       </div>

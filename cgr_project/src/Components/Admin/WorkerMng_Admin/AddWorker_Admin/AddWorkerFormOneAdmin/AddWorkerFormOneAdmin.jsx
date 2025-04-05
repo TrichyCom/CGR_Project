@@ -184,6 +184,17 @@ const AddWorkerFormOneAdmin = () => {
        reader.readAsDataURL(file); // convert to base64
      }
    };
+
+
+
+   const [companyOptions, setCompanyOptions] = useState([]);
+
+   useEffect(() => {
+    axios.get("http://localhost:3001/getCompanies")
+      .then((res) => setCompanyOptions(res.data))
+      .catch((err) => console.error(err));
+  }, []);
+  
    
   return (
     <>
@@ -317,7 +328,7 @@ const AddWorkerFormOneAdmin = () => {
                               <div className="mb-3">
                                 <label className="form-label" htmlFor="exampleFormControlInput1">Company</label>
                                 {/* <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Company" name="CompanyName" onChange={handleChange} value={formData.CompanyName}/> */}
-                                <select
+                                {/* <select
                                   className="form-select"
                                   name="CompanyName"
                                   onChange={handleChange}
@@ -327,7 +338,28 @@ const AddWorkerFormOneAdmin = () => {
                                   <option value="" className="text-dark">Select Company</option>
                                   <option value="Company1" className="text-dark">PNI</option>
                                   <option value="Company2" className="text-dark">CGR</option>
-                                </select>
+                                </select> */}
+
+
+                                <select
+  className="form-select"
+  name="CompanyName"
+  onChange={handleChange}
+  value={formData.CompanyName}
+  id="exampleFormControlInput1"
+>
+  <option value="" className="text-dark">Select Company</option>
+  {companyOptions.map((company) => (
+    <option
+      key={company.id}
+      value={company.CompanyList}
+      className="text-dark"
+    >
+      {company.CompanyList}
+    </option>
+  ))}
+</select>
+
 
                               </div>
                             </div>

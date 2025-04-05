@@ -686,6 +686,45 @@ app.post('/workerreportfiles', upload.fields([
 });
 
 
+// get report data based on Finno
+app.get('/workerreportfiles/:finNo', (req, res) => {
+  const finNo = req.params.finNo;
+  db.query('SELECT * FROM workerreportfiles WHERE FinNo = ?', [finNo], (err, result) => {
+    if (err) return res.status(500).send(err);
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.status(404).json({ message: "Worker report not found" });
+    }
+  });
+});
+
+// Serve file for (download)
+app.get('/download/workerreportfile/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, "uploads", filename); // Adjust path
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error('Error sending file:', err);
+      res.status(500).send('Error sending file');
+    }
+  });
+});
+
+// Serve file for viewing (not download)
+app.get('/view/workerreportfile/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, "uploads", filename); // Adjust as needed
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending file for view:", err);
+      res.status(500).send("Error viewing file");
+    }
+  });
+});
+
+
 
 
 // Fetch all certificates
@@ -815,6 +854,42 @@ app.post("/upload-excel", (req, res) => {
     .catch(() => res.status(500).json({ error: "Error inserting some rows" }));
 });
 
+
+
+
+
+
+// add company list
+// Add company
+app.post("/addCompany", (req, res) => {
+  const { companyName } = req.body;
+  const sql = "INSERT INTO CompanyList (CompanyList) VALUES (?)";
+  db.query(sql, [companyName], (err, result) => {
+    if (err) return res.status(500).json(err);
+    const newCompany = { id: result.insertId, CompanyList: companyName };
+    res.json(newCompany);
+  });
+});
+
+
+// Get all company list
+app.get("/getCompanies", (req, res) => {
+  db.query("SELECT * FROM CompanyList", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+
+// delete particular company name
+app.delete("/deleteCompany/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM CompanyList WHERE id = ?";
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.sendStatus(200); // or res.json({ message: 'Deleted' });
+  });
+});
 
 
 

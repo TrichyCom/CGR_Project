@@ -575,14 +575,25 @@ const fetchCertificates = async () => {
                     <div className="col-xl-3">
                       <div className="mb-3">
                         <label className="form-label">IssueDate</label>
-                        <input
+                        {/* <input
                           type="date"
                           className="form-control"
                           name="IssueDate"
                           value={formData.IssueDate}
                           onChange={handleInputChange}
                           onFocus={(e) => e.target.showPicker()}
-                        />
+                        /> */}
+
+<input
+  type="date"
+  className="form-control"
+  name="IssueDate"
+  value={formData.IssueDate}
+  onChange={handleInputChange}
+  onFocus={(e) => e.target.showPicker()}
+  max={new Date().toISOString().split("T")[0]} 
+/>
+
                       </div>
                     </div>
                     <div className="col-xl-3">
